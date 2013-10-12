@@ -7,11 +7,11 @@ package org.mmarini.jfract3d.applet;
  * 
  */
 public interface XYSurface {
-    /**
-     * 
-     * @param x
-     * @param y
-     * @return
-     */
-    public abstract double calculateZ(double x, double y);
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public abstract double calculateZ(double x, double y);
 }

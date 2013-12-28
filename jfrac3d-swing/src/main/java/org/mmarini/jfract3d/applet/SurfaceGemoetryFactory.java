@@ -25,15 +25,10 @@ public class SurfaceGemoetryFactory {
 	private GeometryInfo info = new GeometryInfo(GeometryInfo.QUAD_ARRAY);
 
 	private int uPointCount = 129;
-
 	private int vPointCount = 129;
-
 	private double uMin = -1.;
-
 	private double uMax = 1.;
-
 	private double vMin = -1.;
-
 	private double vMax = 1.;
 
 	/**

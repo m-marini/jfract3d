@@ -27,14 +27,10 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="j3d/lib/ext/j3daudio.jar"/>
-	<classpathentry kind="lib" path="j3d/lib/ext/j3dcore.jar">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="jfrac3d-swing/j3d/bin"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="j3d/lib/ext/j3dutils.jar"/>
-	<classpathentry kind="lib" path="j3d/lib/ext/vecmath.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

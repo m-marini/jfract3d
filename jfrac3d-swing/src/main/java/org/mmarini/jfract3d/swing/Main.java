@@ -104,9 +104,9 @@ public class Main {
 
 		@Override
 		public Double apply(final Double x, final Double y) {
-			// semisphere
-			final double d = 1 - Math.sqrt(x * x + y * y);
-			return d > 0 ? d * HEIGHT : 0.;
+			// Semisphere
+			final double s = 1 - x * x - y * y;
+			return s > 0 ? Math.sqrt(s) * HEIGHT : 0.;
 		}
 	}, new Function3D() {
 
@@ -285,7 +285,7 @@ public class Main {
 		gc.add(new JSpinner(gridCountModel));
 		gc.add(new JLabel(Messages.getString("Main.type.text"))); //$NON-NLS-1$
 		gc.add(gridSelector);
-		gc.add(new JButton(gridAction));
+		// gc.add(new JButton(gridAction));
 		gc.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.grid.title"))); //$NON-NLS-1$
 
@@ -296,10 +296,10 @@ public class Main {
 		fc.add(new JSpinner(depthModel));
 		fc.add(new JLabel(Messages.getString("Main.function.text"))); //$NON-NLS-1$
 		fc.add(functionSelector);
-		fc.add(new JButton(functionAction));
+		// fc.add(new JButton(functionAction));
 		fc.add(new JLabel(Messages.getString("Main.randomizer.text"))); //$NON-NLS-1$
 		fc.add(randomizerSelector);
-		fc.add(new JButton(randomizerAction));
+		// fc.add(new JButton(randomizerAction));
 		fc.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.fractal.text"))); //$NON-NLS-1$
 
@@ -449,14 +449,14 @@ public class Main {
 	private Geometry createSubjectGeometry() {
 		final Randomizer r = createRandomizer();
 		final FunctionTransformation[] transSet = {
-				FunctionTransformation.create(2, 0, -1, 0, 2, -1, Z_SCALE, Z0)
-						.apply(r.randomize()),
-				FunctionTransformation.create(2, 0, -1, 0, 2, 1, Z_SCALE, Z0)
-						.apply(r.randomize()),
-				FunctionTransformation.create(2, 0, 1, 0, 2, -1, Z_SCALE, Z0)
-						.apply(r.randomize()),
-				FunctionTransformation.create(2, 0, 1, 0, 2, 1, Z_SCALE, Z0)
-						.apply(r.randomize()) };
+				FunctionTransformation.create(2, 2, 0.5, 0, -0.5, -0.5, 0)
+						.scale(1, 1, r.randomize()),
+				FunctionTransformation.create(2, 2, 0.5, 0, -0.5, 0.5, 0)
+						.scale(1, 1, r.randomize()),
+				FunctionTransformation.create(2, 2, 0.5, 0, 0.5, -0.5, 0)
+						.scale(1, 1, r.randomize()),
+				FunctionTransformation.create(2, 2, 0.5, 0, 0.5, 0.5, 0).scale(
+						1, 1, r.randomize()) };
 		final Function3D f = FUNCTIONS[functionSelector.getSelectedIndex()];
 		final GeometryBuilder b = gridSelector.getSelectedIndex() == 0 ? IsoGeometryBuilder
 				.create(gridCountModel.getNumber().intValue(), X_MIN, X_MAX,

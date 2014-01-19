@@ -3,33 +3,79 @@
  */
 package org.mmarini.jfract3d.swing;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+
 /**
  * @author US00852
  */
 public class FunctionTransformation {
+	private static final FunctionTransformation IDENTITY = new FunctionTransformation(
+			new AffineTransform(), 1, 0);
+
 	/**
 	 * 
-	 * @param xScale
-	 * @param yScale
-	 * @param rot
+	 * @param sx
+	 * @param sy
+	 * @param sz
+	 * @param theta
 	 * @param dx
 	 * @param dy
-	 * @param zScale
 	 * @param dz
 	 * @return
 	 */
-	public static FunctionTransformation create(final double xScale,
-			final double yScale, final double rot, final double dx,
-			final double dy, final double zScale, final double dz) {
-		final double t00 = 0;
-		final double t01 = 0;
-		final double t02 = 0;
-		final double t10 = 0;
-		final double t11 = 0;
-		final double t12 = 0;
-		final double zz = zScale;
-		final double z0 = dz;
-		return new FunctionTransformation(t00, t01, t02, t10, t11, t12, zz, z0);
+	public static FunctionTransformation create(final double sx,
+			final double sy, final double sz, final double theta,
+			final double dx, final double dy, final double dz) {
+		return FunctionTransformation.createScale(sx, sy, sz).rotate(theta)
+				.translate(dx, dy, dz);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static FunctionTransformation identity() {
+		return IDENTITY;
+	}
+
+	/**
+	 * 
+	 * @param dx
+	 * @param dy
+	 * @param dz
+	 * @return
+	 */
+	public static FunctionTransformation translation(final double dx,
+			final double dy, final double dz) {
+		final AffineTransform t = new AffineTransform();
+		t.translate(dx, dy);
+		return new FunctionTransformation(t, 1, dz);
+	}
+
+	/**
+	 * 
+	 * @param theta
+	 * @return
+	 */
+	public static FunctionTransformation rotation(final double theta) {
+		final AffineTransform t = new AffineTransform();
+		t.rotate(theta);
+		return new FunctionTransformation(t, 1, 0);
+	}
+
+	/**
+	 * 
+	 * @param sx
+	 * @param sy
+	 * @param sz
+	 * @return
+	 */
+	public static FunctionTransformation createScale(final double sx,
+			final double sy, final double sz) {
+		final AffineTransform t = new AffineTransform();
+		t.scale(sx, sy);
+		return new FunctionTransformation(t, sz, 0);
 	}
 
 	/**
@@ -47,37 +93,23 @@ public class FunctionTransformation {
 	public static FunctionTransformation create(final double t00,
 			final double t01, final double t02, final double t10,
 			final double t11, final double t12, final double zz, final double z0) {
-		return new FunctionTransformation(t00, t01, t02, t10, t11, t12, zz, z0);
+		return new FunctionTransformation(new AffineTransform(t00, t10, t01,
+				t11, t02, t12), zz, z0);
 	}
 
-	private final double t00;
-	private final double t01;
-	private final double t02;
-	private final double t10;
-	private final double t11;
-	private final double t12;
+	private final AffineTransform tr;
 	private final double zz;
 	private final double z0;
 
 	/**
-	 * @param t00
-	 * @param t01
-	 * @param t02
-	 * @param t10
-	 * @param t11
-	 * @param t12
+	 * @param tr
 	 * @param zz
 	 * @param z0
 	 */
-	private FunctionTransformation(final double t00, final double t01,
-			final double t02, final double t10, final double t11,
-			final double t12, final double zz, final double z0) {
-		this.t00 = t00;
-		this.t01 = t01;
-		this.t02 = t02;
-		this.t10 = t10;
-		this.t11 = t11;
-		this.t12 = t12;
+	public FunctionTransformation(final AffineTransform tr, final double zz,
+			final double z0) {
+		super();
+		this.tr = tr;
 		this.zz = zz;
 		this.z0 = z0;
 	}
@@ -88,8 +120,7 @@ public class FunctionTransformation {
 	 * @return
 	 */
 	public FunctionTransformation apply(final double w) {
-		return new FunctionTransformation(t00, t01, t02, t10, t11, t12, zz * w,
-				z0);
+		return new FunctionTransformation(tr, zz * w, z0);
 	}
 
 	/**
@@ -102,8 +133,9 @@ public class FunctionTransformation {
 
 			@Override
 			public Double apply(final Double x, final Double y) {
-				return f.apply(x * t00 + y * t01 + t02, x * t10 + y * t11 + t12)
-						* zz + z0;
+				final Point2D p = new Point2D.Double(x, y);
+				tr.transform(p, p);
+				return f.apply(p.getX(), p.getY()) * zz + z0;
 			}
 		};
 	}
@@ -115,17 +147,48 @@ public class FunctionTransformation {
 	 * @return
 	 */
 	public FunctionTransformation apply(final FunctionTransformation f) {
-		final double r00 = f.t00 * t00 + f.t01 * t10;
-		final double r01 = f.t00 * t01 + f.t01 * t11;
-		final double r02 = f.t00 * t02 + f.t01 * t12 + f.t02;
-
-		final double r10 = f.t10 * t00 + f.t11 * t10;
-		final double r11 = f.t10 * t01 + f.t11 * t11;
-		final double r12 = f.t10 * t02 + f.t11 * t12 + f.t12;
+		final AffineTransform t = new AffineTransform(f.tr);
+		t.concatenate(tr);
 
 		final double rzz = f.zz * zz;
 		final double rz0 = f.z0 * zz + z0;
-		return new FunctionTransformation(r00, r01, r02, r10, r11, r12, rzz,
-				rz0);
+		return new FunctionTransformation(t, rzz, rz0);
+	}
+
+	/**
+	 * 
+	 * @param sx
+	 * @param sy
+	 * @param sz
+	 * @return
+	 */
+	public FunctionTransformation scale(final double sx, final double sy,
+			final double sz) {
+		final AffineTransform t = new AffineTransform(tr);
+		t.scale(sx, sy);
+		return new FunctionTransformation(t, zz * sz, z0);
+	}
+
+	/**
+	 * 
+	 * @param theta
+	 * @return
+	 */
+	public FunctionTransformation rotate(final double theta) {
+		final AffineTransform t = new AffineTransform(tr);
+		t.rotate(theta);
+		return new FunctionTransformation(t, zz, z0);
+	}
+
+	/**
+	 * 
+	 * @param theta
+	 * @return
+	 */
+	public FunctionTransformation translate(final double dx, final double dy,
+			final double dz) {
+		final AffineTransform t = new AffineTransform(tr);
+		t.translate(dx, dy);
+		return new FunctionTransformation(t, zz, z0 + dz);
 	}
 }

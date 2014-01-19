@@ -88,7 +88,7 @@ public class FractalFunctionBuilder {
 		final List<FunctionTransformation> l1 = new ArrayList<>();
 		for (final FunctionTransformation t1 : l)
 			for (final FunctionTransformation t2 : trans)
-				l1.add(t1.apply(t2).apply(randomizer.randomize()));
+				l1.add(t1.apply(t2).scale(1, 1, randomizer.randomize()));
 		final List<FunctionTransformation> l2 = new ArrayList<>(l);
 		l2.addAll(createFractalTransforms(l1, d - 1));
 		return l2;

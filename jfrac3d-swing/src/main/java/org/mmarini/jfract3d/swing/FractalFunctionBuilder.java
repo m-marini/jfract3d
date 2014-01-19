@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.applet;
+package org.mmarini.jfract3d.swing;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,7 +56,7 @@ public class FractalFunctionBuilder {
 		return new Function3D() {
 
 			@Override
-			public double apply(final double x, final double y) {
+			public Double apply(final Double x, final Double y) {
 				double z = seed.apply(x, y);
 				for (final FunctionTransformation t : trans)
 					z += t.apply(seed).apply(x, y);

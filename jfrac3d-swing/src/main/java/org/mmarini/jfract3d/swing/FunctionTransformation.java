@@ -1,12 +1,55 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.applet;
+package org.mmarini.jfract3d.swing;
 
 /**
  * @author US00852
  */
 public class FunctionTransformation {
+	/**
+	 * 
+	 * @param xScale
+	 * @param yScale
+	 * @param rot
+	 * @param dx
+	 * @param dy
+	 * @param zScale
+	 * @param dz
+	 * @return
+	 */
+	public static FunctionTransformation create(final double xScale,
+			final double yScale, final double rot, final double dx,
+			final double dy, final double zScale, final double dz) {
+		final double t00 = 0;
+		final double t01 = 0;
+		final double t02 = 0;
+		final double t10 = 0;
+		final double t11 = 0;
+		final double t12 = 0;
+		final double zz = zScale;
+		final double z0 = dz;
+		return new FunctionTransformation(t00, t01, t02, t10, t11, t12, zz, z0);
+	}
+
+	/**
+	 * 
+	 * @param t00
+	 * @param t01
+	 * @param t02
+	 * @param t10
+	 * @param t11
+	 * @param t12
+	 * @param zz
+	 * @param z0
+	 * @return
+	 */
+	public static FunctionTransformation create(final double t00,
+			final double t01, final double t02, final double t10,
+			final double t11, final double t12, final double zz, final double z0) {
+		return new FunctionTransformation(t00, t01, t02, t10, t11, t12, zz, z0);
+	}
+
 	private final double t00;
 	private final double t01;
 	private final double t02;
@@ -26,10 +69,9 @@ public class FunctionTransformation {
 	 * @param zz
 	 * @param z0
 	 */
-	public FunctionTransformation(final double t00, final double t01,
+	private FunctionTransformation(final double t00, final double t01,
 			final double t02, final double t10, final double t11,
 			final double t12, final double zz, final double z0) {
-		super();
 		this.t00 = t00;
 		this.t01 = t01;
 		this.t02 = t02;
@@ -59,7 +101,7 @@ public class FunctionTransformation {
 		return new Function3D() {
 
 			@Override
-			public double apply(final double x, final double y) {
+			public Double apply(final Double x, final Double y) {
 				return f.apply(x * t00 + y * t01 + t02, x * t10 + y * t11 + t12)
 						* zz + z0;
 			}

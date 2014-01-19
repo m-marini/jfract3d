@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.applet;
+package org.mmarini.jfract3d.swing;
 
 /**
  * @author US00852

@@ -27,14 +27,10 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -57,14 +53,11 @@ public class Main {
 	private static final Bounds DEFAULT_BOUNDS = new BoundingSphere(
 			new Point3d(0.0, 0.0, 0.0), 100.0);
 
-	private static final double X_MIN = -1;
-	private static final double X_MAX = 1;
-	private static final double Z_MIN = -1;
-	private static final double Z_MAX = 1;
+	private static final long DEFAULT_SEED = 123l;
+	private static final double Y_SCALE = 500e-3;
+	private static final double Y_SCALE_STEP = 10e-3;
 	private static final double HEIGHT = 500e-3;
 	private static final double S = 300e-3;
-	private static final double Z_SCALE = 0.5;
-	private static final int SEED = 12341;
 
 	/**
 	 * 
@@ -78,15 +71,17 @@ public class Main {
 	private final TransformGroup trans;
 	private final SpinnerNumberModel gridCountModel;
 	private final SpinnerNumberModel depthModel;
+	private final SpinnerNumberModel seedModel;
+	private final SpinnerNumberModel yScaleModel;
 	private final AbstractAction gridAction;
 	private final AbstractAction applyAction;
 	private final AbstractAction functionAction;
 	private final AbstractAction randomizerAction;
 	private final AbstractAction helpAction;
-	private final Component gridPane;
 	private final JComboBox<String> gridSelector;
 	private final JComboBox<String> functionSelector;
 	private final JComboBox<String> randomizerSelector;
+	private final GridDialog gridDialog;
 
 	/**
 	 * 
@@ -96,12 +91,16 @@ public class Main {
 		trans = new TransformGroup();
 		gridCountModel = new SpinnerNumberModel(65, 3, 129, 1);
 		depthModel = new SpinnerNumberModel(4, 0, 6, 1);
+		seedModel = new SpinnerNumberModel(DEFAULT_SEED, null, null, 1l);
+		yScaleModel = new SpinnerNumberModel(Y_SCALE, null, null, Y_SCALE_STEP);
+		gridDialog = new GridDialog(frame, -1, 1, -1, 1);
 		gridAction = new AbstractAction() {
 			private static final long serialVersionUID = 1144447490677895560L;
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				// TODO
+				if (gridDialog.showDialog())
+					trans.setChild(createSubjectShape(), 0);
 			}
 
 		};
@@ -147,13 +146,13 @@ public class Main {
 				"Main.function.names").split(",")); //$NON-NLS-1$
 		randomizerSelector = new JComboBox<String>(Messages.getString(
 				"Main.randomizer.names").split(",")); //$NON-NLS-1$
-		gridPane = createGridPane();
 
 		final ActionBuilder builder = new ActionBuilder(new ChangeListener() {
 
 			@Override
 			public void stateChanged(final ChangeEvent e) {
-				SwingUtilities.updateComponentTreeUI(frame);
+				for (final Component c : new Component[] { frame, gridDialog })
+					SwingUtilities.updateComponentTreeUI(c);
 			}
 		});
 
@@ -176,6 +175,8 @@ public class Main {
 		c.add(createControlPane(), BorderLayout.SOUTH);
 		frame.setJMenuBar(builder.createMenuBar("options", "lookAndFeel", //$NON-NLS-1$ //$NON-NLS-2$
 				"help", helpAction)); //$NON-NLS-1$
+		frame.setSize(800, 600);
+		SwingTools.centerOnScreen(frame);
 	}
 
 	/**
@@ -215,65 +216,33 @@ public class Main {
 	private Component createControlPane() {
 		final JPanel c = new JPanel();
 
-		final JPanel gc = new JPanel();
-		gc.add(new JLabel(Messages.getString("Main.points.text"))); //$NON-NLS-1$
-		gc.add(new JSpinner(gridCountModel));
-		gc.add(new JLabel(Messages.getString("Main.type.text"))); //$NON-NLS-1$
-		gc.add(gridSelector);
-		// gc.add(new JButton(gridAction));
+		final JPanel gc = new GridLayoutHelper<>(new JPanel())
+				.modify("insets,2")
+				.add("Main.points.text", "+w hspan",
+						SwingTools.createSpinner(gridCountModel, "#0", 3),
+						"Main.type.text", gridSelector, gridAction)
+				.getContainer();
 		gc.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.grid.title"))); //$NON-NLS-1$
 
 		c.add(gc);
 
-		final JPanel fc = new JPanel();
-		fc.add(new JLabel(Messages.getString("Main.depth.text"))); //$NON-NLS-1$
-		fc.add(new JSpinner(depthModel));
-		fc.add(new JLabel(Messages.getString("Main.function.text"))); //$NON-NLS-1$
-		fc.add(functionSelector);
-		// fc.add(new JButton(functionAction));
-		fc.add(new JLabel(Messages.getString("Main.randomizer.text"))); //$NON-NLS-1$
-		fc.add(randomizerSelector);
-		// fc.add(new JButton(randomizerAction));
+		final JPanel fc = new GridLayoutHelper<>(new JPanel())
+				.modify("insets,2 w")
+				.add("Main.depth.text",
+						SwingTools.createSpinner(depthModel, "#,##0", 2),
+						"Main.function.text", "+hspan", functionSelector,
+						"Main.yScale.text",
+						SwingTools.createSpinner(yScaleModel, "#,##0.000", 6),
+						"Main.seed.text", "+hspan",
+						SwingTools.createSpinner(seedModel, "#0", 6))
+				.getContainer();
 		fc.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.fractal.text"))); //$NON-NLS-1$
 
 		c.add(fc);
 
 		c.add(new JButton(applyAction));
-		return c;
-	}
-
-	/**
-	 * s
-	 * 
-	 * @return
-	 */
-	private Component createFractalPane() {
-		final Box c = Box.createVerticalBox();
-		c.add(new JLabel("Depth")); //$NON-NLS-1$
-		c.add(new JSpinner());
-		c.add(new JLabel("Y Scale")); //$NON-NLS-1$
-		c.add(new JSpinner());
-		c.add(new JLabel("Seed Function")); //$NON-NLS-1$
-		c.add(new JComboBox<String>(new String[] { "Gauss", "Piramid", //$NON-NLS-1$ //$NON-NLS-2$
-				"Exponetial", "Sinc" })); //$NON-NLS-1$ //$NON-NLS-2$
-		c.add(new JLabel("Height")); //$NON-NLS-1$
-		c.add(new JSpinner());
-		c.add(new JLabel("Width")); //$NON-NLS-1$
-		c.add(new JSpinner());
-		c.add(new JLabel("Randomizer")); //$NON-NLS-1$
-		c.add(new JComboBox<String>(
-				new String[] { "Gaussian", "Linear", "None" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		c.add(new JLabel("Seed")); //$NON-NLS-1$
-		c.add(new JTextField(6));
-		c.add(new JLabel("P(positive)")); //$NON-NLS-1$
-		c.add(new JSpinner());
-		c.add(new JLabel("Average")); //$NON-NLS-1$
-		c.add(new JSpinner());
-		c.add(new JLabel("Width")); //$NON-NLS-1$
-		c.add(new JSpinner());
-		c.setBorder(BorderFactory.createTitledBorder("Fractal")); //$NON-NLS-1$
 		return c;
 	}
 
@@ -319,28 +288,10 @@ public class Main {
 	 * 
 	 * @return
 	 */
-	private Component createGridPane() {
-		final Box c = Box.createVerticalBox();
-
-		c.add(new JLabel("XMin")); //$NON-NLS-1$
-		c.add(new JSpinner());
-		c.add(new JLabel("Xmax")); //$NON-NLS-1$
-		c.add(new JSpinner());
-		c.add(new JLabel("ZMin")); //$NON-NLS-1$
-		c.add(new JSpinner());
-		c.add(new JLabel("Zmax")); //$NON-NLS-1$
-		c.add(new JSpinner());
-		c.setBorder(BorderFactory.createTitledBorder("Grid")); //$NON-NLS-1$
-		return c;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
 	private Randomizer<Double> createRandomizer() {
 		final Randomizer<Double> r;
-		final Random s = new Random(SEED);
+		final long v = seedModel.getNumber().longValue();
+		final Random s = v == 0 ? new Random() : new Random(v);
 		switch (randomizerSelector.getSelectedIndex()) {
 		case 0:
 			r = new GaussRandomizer(s, HEIGHT, HEIGHT / 7, 0.5);
@@ -422,17 +373,22 @@ public class Main {
 	 */
 	private Geometry createSubjectGeometry() {
 		final FunctionFactory f = createFunctionFactory();
+		final double yScale = yScaleModel.getNumber().doubleValue();
 		final FractalTransform[] s = {
-				FractalTransform.create(2, 2, Z_SCALE, 0, -0.5, -0.5, 0),
-				FractalTransform.create(2, 2, Z_SCALE, 0, -0.5, 0.5, 0),
-				FractalTransform.create(2, 2, Z_SCALE, 0, 0.5, -0.5, 0),
-				FractalTransform.create(2, 2, Z_SCALE, 0, 0.5, 0.5, 0) };
+				FractalTransform.create(2, 2, yScale, 0, -0.5, -0.5, 0),
+				FractalTransform.create(2, 2, yScale, 0, -0.5, 0.5, 0),
+				FractalTransform.create(2, 2, yScale, 0, 0.5, -0.5, 0),
+				FractalTransform.create(2, 2, yScale, 0, 0.5, 0.5, 0) };
 		final GeometryBuilder b = gridSelector.getSelectedIndex() == 0 ? IsoGeometryBuilder
-				.create(gridCountModel.getNumber().intValue(), X_MIN, X_MAX,
-						Z_MIN, Z_MAX, depthModel.getNumber().intValue(), f, s)
+				.create(gridCountModel.getNumber().intValue(), gridDialog
+						.getxMin(), gridDialog.getxMax(), gridDialog.getzMin(),
+						gridDialog.getzMax(),
+						depthModel.getNumber().intValue(), f, s)
 				: QuadGeometryBuilder.create(gridCountModel.getNumber()
-						.intValue(), X_MIN, X_MAX, Z_MIN, Z_MAX, depthModel
-						.getNumber().intValue(), f, s);
+						.intValue(), gridDialog.getxMin(),
+						gridDialog.getxMax(), gridDialog.getzMin(), gridDialog
+								.getzMax(), depthModel.getNumber().intValue(),
+						f, s);
 		return b.build();
 	}
 
@@ -454,7 +410,6 @@ public class Main {
 	 * 
 	 */
 	private void run() {
-		frame.setSize(800, 600);
 		frame.setVisible(true);
 	}
 

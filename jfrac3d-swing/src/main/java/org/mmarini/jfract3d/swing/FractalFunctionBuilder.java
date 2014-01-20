@@ -62,7 +62,7 @@ public class FractalFunctionBuilder {
 	}
 
 	/**
-	 * @param asl
+	 * @param l
 	 * @param d
 	 * @return
 	 */

@@ -9,7 +9,7 @@ import java.util.Random;
  * @author US00852
  * 
  */
-public class LinearRandomizer implements Randomizer {
+public class LinearRandomizer implements Randomizer<Double> {
 	private final Random random;
 	private final double average;
 	private final double width;
@@ -23,7 +23,6 @@ public class LinearRandomizer implements Randomizer {
 	 */
 	public LinearRandomizer(final Random random, final double average,
 			final double width, final double positive) {
-		super();
 		this.random = random;
 		this.average = average;
 		this.width = width;
@@ -31,10 +30,10 @@ public class LinearRandomizer implements Randomizer {
 	}
 
 	/**
-	 * @see org.mmarini.jfract3d.swing.Randomizer#randomize()
+	 * @see org.mmarini.jfract3d.swing.Randomizer#nextDouble()
 	 */
 	@Override
-	public double randomize() {
+	public Double next() {
 		final double s = random.nextDouble() * width * 2 + average - width;
 		return random.nextDouble() < positive ? s : -s;
 	}

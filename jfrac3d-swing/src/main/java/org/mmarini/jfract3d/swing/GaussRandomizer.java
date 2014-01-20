@@ -9,7 +9,7 @@ import java.util.Random;
  * @author US00852
  * 
  */
-public class GaussRandomizer implements Randomizer {
+public class GaussRandomizer implements Randomizer<Double> {
 	private final Random random;
 	private final double average;
 	private final double width;
@@ -31,10 +31,10 @@ public class GaussRandomizer implements Randomizer {
 	}
 
 	/**
-	 * @see org.mmarini.jfract3d.swing.Randomizer#randomize()
+	 * @see org.mmarini.jfract3d.swing.Randomizer#nextDouble()
 	 */
 	@Override
-	public double randomize() {
+	public Double next() {
 		final double s = random.nextGaussian() * width + average;
 		return random.nextDouble() < positive ? s : -s;
 	}

@@ -32,14 +32,13 @@ public class IsoGeometryBuilder implements GeometryBuilder {
 	 */
 	public static IsoGeometryBuilder create(final int xCount,
 			final double xMin, final double xMax, final double zMin,
-			final double zMax, final int depth,
-			final FunctionTransformation[] transSet,
-			final Function3D seedFunction, final Randomizer randomizer) {
+			final double zMax, final int depth, final FunctionFactory factory,
+			final FractalTransform... transSet) {
 		final double xDistance = (xMax - xMin) / (xCount - 1);
 		final double zDistance = xDistance * Z_FACTOR;
 		final int zCount = (int) Math.ceil((zMax - zMin) / zDistance + 1);
 		return new IsoGeometryBuilder(xCount, zCount, xDistance, zDistance,
-				xMin, zMin, depth, transSet, seedFunction, randomizer);
+				xMin, zMin, depth, factory, transSet);
 	}
 
 	/**
@@ -58,11 +57,10 @@ public class IsoGeometryBuilder implements GeometryBuilder {
 	 */
 	public static IsoGeometryBuilder create(final int xCount, final int zCount,
 			final double xDistance, final double zDistance, final double xMin,
-			final double zMin, final int depth,
-			final FunctionTransformation[] transSet,
-			final Function3D seedFunction, final Randomizer randomizer) {
+			final double zMin, final int depth, final FunctionFactory factory,
+			final FractalTransform... transSet) {
 		return new IsoGeometryBuilder(xCount, zCount, xDistance, zDistance,
-				xMin, zMin, depth, transSet, seedFunction, randomizer);
+				xMin, zMin, depth, factory, transSet);
 	}
 
 	private final int xCount;
@@ -72,11 +70,9 @@ public class IsoGeometryBuilder implements GeometryBuilder {
 	private final double xMin;
 	private final double zMin;
 	private final int depth;
-	private final FunctionTransformation[] transSet;
+	private final FunctionFactory factory;
 
-	private final Function3D seedFunction;
-
-	private final Randomizer randomizer;
+	private final FractalTransform[] transSet;
 
 	/**
 	 * @param xCount
@@ -86,15 +82,14 @@ public class IsoGeometryBuilder implements GeometryBuilder {
 	 * @param xMin
 	 * @param zMin
 	 * @param depth
+	 * @param factory
 	 * @param transSet
-	 * @param seedFunction
-	 * @param randomizer
 	 */
 	private IsoGeometryBuilder(final int xCount, final int zCount,
 			final double xDistance, final double zDistance, final double xMin,
-			final double zMin, final int depth,
-			final FunctionTransformation[] transSet,
-			final Function3D seedFunction, final Randomizer randomizer) {
+			final double zMin, final int depth, final FunctionFactory factory,
+			final FractalTransform[] transSet) {
+		super();
 		this.xCount = xCount;
 		this.zCount = zCount;
 		this.xDistance = xDistance;
@@ -102,9 +97,8 @@ public class IsoGeometryBuilder implements GeometryBuilder {
 		this.xMin = xMin;
 		this.zMin = zMin;
 		this.depth = depth;
+		this.factory = factory;
 		this.transSet = transSet;
-		this.seedFunction = seedFunction;
-		this.randomizer = randomizer;
 	}
 
 	/**
@@ -159,8 +153,7 @@ public class IsoGeometryBuilder implements GeometryBuilder {
 		// final Randomizer r = new LinearRandomizer(1, 1);
 		final GridBuilder b = new IsoGridBuilder(xDistance, zDistance, xMin,
 				zMin,
-				new FractalFunctionBuilder(randomizer, depth, transSet)
-						.create(seedFunction));
+				new FractalFunctionBuilder(factory, depth, transSet).create());
 		for (int i = 0; i < zCount; ++i)
 			for (int j = 0; j < xCount; ++j)
 				c[i][j] = b.apply(zCount - 1 - i, j);

@@ -23,20 +23,18 @@ public class QuadGeometryBuilder implements GeometryBuilder {
 	 * @param zMin
 	 * @param zMax
 	 * @param depth
+	 * @param factory
 	 * @param transSet
-	 * @param seedFunction
-	 * @param randomizer
 	 * @return
 	 */
 	public static QuadGeometryBuilder create(final int xCount,
 			final double xMin, final double xMax, final double zMin,
-			final double zMax, final int depth,
-			final FunctionTransformation[] transSet,
-			final Function3D seedFunction, final Randomizer randomizer) {
+			final double zMax, final int depth, final FunctionFactory factory,
+			final FractalTransform... transSet) {
 		final double distance = (xMax - xMin) / (xCount - 1);
 		final int zCount = (int) Math.ceil((zMax - zMin) / distance + 1);
 		return new QuadGeometryBuilder(xCount, zCount, distance, distance,
-				xMin, zMin, depth, transSet, seedFunction, randomizer);
+				xMin, zMin, depth, factory, transSet);
 	}
 
 	/**
@@ -47,31 +45,27 @@ public class QuadGeometryBuilder implements GeometryBuilder {
 	 * @param xMin
 	 * @param zMin
 	 * @param depth
+	 * @param factory
 	 * @param transSet
-	 * @param seedFunction
-	 * @param randomizer
 	 */
 	public static QuadGeometryBuilder create(final int xCount,
 			final int zCount, final double xDistance, final double zDistance,
 			final double xMin, final double zMin, final int depth,
-			final FunctionTransformation[] transSet,
-			final Function3D seedFunction, final Randomizer randomizer) {
+			final FunctionFactory factory, final FractalTransform... transSet) {
 		return new QuadGeometryBuilder(xCount, zCount, xDistance, zDistance,
-				xMin, zMin, depth, transSet, seedFunction, randomizer);
+				xMin, zMin, depth, factory, transSet);
 	}
 
 	private final int xCount;
+
 	private final int zCount;
 	private final double xDistance;
 	private final double zDistance;
 	private final double xMin;
 	private final double zMin;
 	private final int depth;
-	private final FunctionTransformation[] transSet;
-
-	private final Function3D seedFunction;
-
-	private final Randomizer randomizer;
+	private final FunctionFactory factory;
+	private final FractalTransform[] transSet;
 
 	/**
 	 * @param xCount
@@ -81,15 +75,13 @@ public class QuadGeometryBuilder implements GeometryBuilder {
 	 * @param xMin
 	 * @param zMin
 	 * @param depth
+	 * @param factory
 	 * @param transSet
-	 * @param seedFunction
-	 * @param randomizer
 	 */
 	private QuadGeometryBuilder(final int xCount, final int zCount,
 			final double xDistance, final double zDistance, final double xMin,
-			final double zMin, final int depth,
-			final FunctionTransformation[] transSet,
-			final Function3D seedFunction, final Randomizer randomizer) {
+			final double zMin, final int depth, final FunctionFactory factory,
+			final FractalTransform[] transSet) {
 		super();
 		this.xCount = xCount;
 		this.zCount = zCount;
@@ -98,9 +90,8 @@ public class QuadGeometryBuilder implements GeometryBuilder {
 		this.xMin = xMin;
 		this.zMin = zMin;
 		this.depth = depth;
+		this.factory = factory;
 		this.transSet = transSet;
-		this.seedFunction = seedFunction;
-		this.randomizer = randomizer;
 	}
 
 	/**
@@ -139,8 +130,7 @@ public class QuadGeometryBuilder implements GeometryBuilder {
 		final Point3d[][] c = new Point3d[zCount][xCount];
 		final GridBuilder b = new QuadGridBuilder(xDistance, zDistance, xMin,
 				zMin,
-				new FractalFunctionBuilder(randomizer, depth, transSet)
-						.create(seedFunction));
+				new FractalFunctionBuilder(factory, depth, transSet).create());
 		for (int i = 0; i < zCount; ++i)
 			for (int j = 0; j < xCount; ++j)
 				c[i][j] = b.apply(zCount - 1 - i, j);

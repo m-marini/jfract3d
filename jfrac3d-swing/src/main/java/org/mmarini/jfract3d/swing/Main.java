@@ -54,71 +54,6 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
  */
 public class Main {
 
-	private static final Function3D[] FUNCTIONS = { new Function3D() {
-
-		@Override
-		public Double apply(final Double x, final Double y) {
-			// Gauss function
-			return Math.exp(-(x * x + y * y) / S) * HEIGHT;
-		}
-	}, new Function3D() {
-
-		@Override
-		public Double apply(final Double x, final Double y) {
-			// Piramid function
-			final double f1 = Math.min(x + 1, 1 - x);
-			final double f2 = Math.min(y + 1, 1 - y);
-			return Math.max(Math.min(f1, f2), 0) * HEIGHT;
-		}
-	}, new Function3D() {
-
-		@Override
-		public Double apply(final Double x, final Double y) {
-			// Exponential function
-			return Math.exp(-Math.sqrt((x * x + y * y) / S)) * HEIGHT;
-		}
-	}, new Function3D() {
-
-		@Override
-		public Double apply(final Double x, final Double y) {
-			// Box
-			return (x > -0.5 && x < 0.5 && y > -0.5 && y < 0.5) ? HEIGHT : 0.;
-		}
-	}, new Function3D() {
-
-		@Override
-		public Double apply(final Double x, final Double y) {
-			// Cylinder
-			final double d = x * x + y * y;
-			return d <= 0.25 ? HEIGHT : 0.;
-		}
-	}, new Function3D() {
-
-		@Override
-		public Double apply(final Double x, final Double y) {
-			// Cone
-			final double d = 1 - Math.sqrt(x * x + y * y);
-			return d > 0 ? d * HEIGHT : 0.;
-		}
-	}, new Function3D() {
-
-		@Override
-		public Double apply(final Double x, final Double y) {
-			// Semisphere
-			final double s = 1 - x * x - y * y;
-			return s > 0 ? Math.sqrt(s) * HEIGHT : 0.;
-		}
-	}, new Function3D() {
-
-		@Override
-		public Double apply(final Double x, final Double y) {
-			// Sync function
-			final double s = Math.sqrt(x * x + y * y) * Math.PI;
-			final double s1 = (s <= 1e-10) ? 1 : Math.sin(s) / s;
-			return s1 * HEIGHT;
-		}
-	} };
-
 	private static final Bounds DEFAULT_BOUNDS = new BoundingSphere(
 			new Point3d(0.0, 0.0, 0.0), 100.0);
 
@@ -127,9 +62,9 @@ public class Main {
 	private static final double Z_MIN = -1;
 	private static final double Z_MAX = 1;
 	private static final double HEIGHT = 500e-3;
-	private static final double S = 200e-3;
+	private static final double S = 300e-3;
 	private static final double Z_SCALE = 0.5;
-	private static final double Z0 = 0;
+	private static final int SEED = 12341;
 
 	/**
 	 * 
@@ -343,6 +278,44 @@ public class Main {
 	}
 
 	/**
+	 * @return
+	 */
+	private FunctionFactory createFunctionFactory() {
+		final FunctionFactory f;
+		final Randomizer<Double> r = createRandomizer();
+		switch (functionSelector.getSelectedIndex()) {
+		case 1:
+			f = new PlaneFunctionFactory(r, r);
+			break;
+		case 2:
+			f = new PiramidFunctionFactory(r);
+			break;
+		case 3:
+			f = new ExpFunctionFactory(S, r);
+			break;
+		case 4:
+			f = new BoxFunctionFactory(S, r);
+			break;
+		case 5:
+			f = new CylinderFunctionFactory(S, r);
+			break;
+		case 6:
+			f = new ConeFunctionFactory(S, r);
+			break;
+		case 7:
+			f = new HemisphereFunctionFactory(S, r);
+			break;
+		case 8:
+			f = new SincFunctionFactory(S, r);
+			break;
+		default:
+			f = new GaussianFunctionFactory(S, r);
+			break;
+		}
+		return f;
+	}
+
+	/**
 	 * 
 	 * @return
 	 */
@@ -365,21 +338,22 @@ public class Main {
 	 * 
 	 * @return
 	 */
-	private Randomizer createRandomizer() {
-		final Randomizer r;
+	private Randomizer<Double> createRandomizer() {
+		final Randomizer<Double> r;
+		final Random s = new Random(SEED);
 		switch (randomizerSelector.getSelectedIndex()) {
 		case 0:
-			r = new GaussRandomizer(new Random(123), 1, 1. / 7, 0.5);
+			r = new GaussRandomizer(s, HEIGHT, HEIGHT / 7, 0.5);
 			break;
 		case 1:
-			r = new LinearRandomizer(new Random(123), 1, 1. / 7, 0.5);
+			r = new LinearRandomizer(s, HEIGHT, HEIGHT / 7, 0.5);
 			break;
 		default:
-			r = new Randomizer() {
+			r = new Randomizer<Double>() {
 
 				@Override
-				public double randomize() {
-					return 1;
+				public Double next() {
+					return HEIGHT;
 				}
 			};
 			break;
@@ -447,23 +421,18 @@ public class Main {
 	 * @return
 	 */
 	private Geometry createSubjectGeometry() {
-		final Randomizer r = createRandomizer();
-		final FunctionTransformation[] transSet = {
-				FunctionTransformation.create(2, 2, 0.5, 0, -0.5, -0.5, 0)
-						.scale(1, 1, r.randomize()),
-				FunctionTransformation.create(2, 2, 0.5, 0, -0.5, 0.5, 0)
-						.scale(1, 1, r.randomize()),
-				FunctionTransformation.create(2, 2, 0.5, 0, 0.5, -0.5, 0)
-						.scale(1, 1, r.randomize()),
-				FunctionTransformation.create(2, 2, 0.5, 0, 0.5, 0.5, 0).scale(
-						1, 1, r.randomize()) };
-		final Function3D f = FUNCTIONS[functionSelector.getSelectedIndex()];
+		final FunctionFactory f = createFunctionFactory();
+		final FractalTransform[] s = {
+				FractalTransform.create(2, 2, Z_SCALE, 0, -0.5, -0.5, 0),
+				FractalTransform.create(2, 2, Z_SCALE, 0, -0.5, 0.5, 0),
+				FractalTransform.create(2, 2, Z_SCALE, 0, 0.5, -0.5, 0),
+				FractalTransform.create(2, 2, Z_SCALE, 0, 0.5, 0.5, 0) };
 		final GeometryBuilder b = gridSelector.getSelectedIndex() == 0 ? IsoGeometryBuilder
 				.create(gridCountModel.getNumber().intValue(), X_MIN, X_MAX,
-						Z_MIN, Z_MAX, depthModel.getNumber().intValue(),
-						transSet, f, r) : QuadGeometryBuilder.create(
-				gridCountModel.getNumber().intValue(), X_MIN, X_MAX, Z_MIN,
-				Z_MAX, depthModel.getNumber().intValue(), transSet, f, r);
+						Z_MIN, Z_MAX, depthModel.getNumber().intValue(), f, s)
+				: QuadGeometryBuilder.create(gridCountModel.getNumber()
+						.intValue(), X_MIN, X_MAX, Z_MIN, Z_MAX, depthModel
+						.getNumber().intValue(), f, s);
 		return b.build();
 	}
 

@@ -4,7 +4,6 @@
 package org.mmarini.jfract3d.swing;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,37 +12,20 @@ import java.util.List;
  * 
  */
 public class FractalFunctionBuilder {
-	private final Randomizer randomizer;
-	private final int deep;
-	private final FunctionTransformation[] trans;
+	private final FunctionFactory factory;
+	private final int depth;
+	private final FractalTransform[] trans;
 
 	/**
-	 * 
-	 * @param deep
+	 * @param factory
+	 * @param depth
 	 * @param trans
 	 */
-	public FractalFunctionBuilder(final int deep,
-			final FunctionTransformation... trans) {
-		this(new Randomizer() {
-
-			@Override
-			public double randomize() {
-				return 1;
-			}
-		}, deep, trans);
-	}
-
-	/**
-	 * 
-	 * @param randomizer
-	 * @param deep
-	 * @param trans
-	 */
-	public FractalFunctionBuilder(final Randomizer randomizer, final int deep,
-			final FunctionTransformation... trans) {
+	public FractalFunctionBuilder(final FunctionFactory factory,
+			final int depth, final FractalTransform... trans) {
+		this.factory = factory;
+		this.depth = depth;
 		this.trans = trans;
-		this.deep = deep;
-		this.randomizer = randomizer;
 	}
 
 	/**
@@ -51,15 +33,14 @@ public class FractalFunctionBuilder {
 	 * @param trans
 	 * @return
 	 */
-	private Function3D compose(final Function3D seed,
-			final List<FunctionTransformation> trans) {
+	private Function3D compose(final List<Function3D> trans) {
 		return new Function3D() {
 
 			@Override
 			public Double apply(final Double x, final Double y) {
-				double z = seed.apply(x, y);
-				for (final FunctionTransformation t : trans)
-					z += t.apply(seed).apply(x, y);
+				double z = 0;
+				for (final Function3D t : trans)
+					z += t.apply(x, y);
 				return z;
 			}
 		};
@@ -69,9 +50,15 @@ public class FractalFunctionBuilder {
 	 * 
 	 * @return
 	 */
-	public Function3D create(final Function3D seed) {
-		return compose(seed,
-				createFractalTransforms(Arrays.asList(trans), deep));
+	public Function3D create() {
+		final List<TransformedFunction> l = new ArrayList<>();
+		final Function3D s = factory.create();
+		for (final FractalTransform t : trans)
+			l.add(new TransformedFunction(s, t));
+		final List<Function3D> l2 = new ArrayList<Function3D>(
+				createFractalTransforms(l, depth));
+		l2.add(s);
+		return compose(l2);
 	}
 
 	/**
@@ -79,17 +66,17 @@ public class FractalFunctionBuilder {
 	 * @param d
 	 * @return
 	 */
-	private List<FunctionTransformation> createFractalTransforms(
-			final List<FunctionTransformation> l, final int d) {
+	private List<TransformedFunction> createFractalTransforms(
+			final List<TransformedFunction> l, final int d) {
 		if (d == 0)
 			return Collections.emptyList();
 		if (d == 1)
 			return l;
-		final List<FunctionTransformation> l1 = new ArrayList<>();
-		for (final FunctionTransformation t1 : l)
-			for (final FunctionTransformation t2 : trans)
-				l1.add(t1.apply(t2).scale(1, 1, randomizer.randomize()));
-		final List<FunctionTransformation> l2 = new ArrayList<>(l);
+		final List<TransformedFunction> l1 = new ArrayList<>();
+		for (final TransformedFunction t1 : l)
+			for (final FractalTransform t2 : trans)
+				l1.add(t1.apply(factory.create()).apply(t2));
+		final List<TransformedFunction> l2 = new ArrayList<>(l);
 		l2.addAll(createFractalTransforms(l1, d - 1));
 		return l2;
 	}

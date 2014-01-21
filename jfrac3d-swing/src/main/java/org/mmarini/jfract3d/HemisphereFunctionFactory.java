@@ -12,13 +12,13 @@ public class HemisphereFunctionFactory implements FunctionFactory {
 	private final Randomizer<Double> height;
 
 	/**
-	 * @param sigma
+	 * @param radius
 	 * @param height
 	 */
-	public HemisphereFunctionFactory(final double sigma,
+	public HemisphereFunctionFactory(final double radius,
 			final Randomizer<Double> height) {
 		super();
-		this.radius = sigma;
+		this.radius = radius;
 		this.height = height;
 	}
 

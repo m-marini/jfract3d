@@ -12,13 +12,13 @@ public class SincFunctionFactory implements FunctionFactory {
 	private final Randomizer<Double> height;
 
 	/**
-	 * @param sigma
+	 * @param radius
 	 * @param height
 	 */
-	public SincFunctionFactory(final double sigma,
+	public SincFunctionFactory(final double radius,
 			final Randomizer<Double> height) {
 		super();
-		this.radius = sigma;
+		this.radius = radius;
 		this.height = height;
 	}
 

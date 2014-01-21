@@ -23,11 +23,20 @@ public class RandomizerSelector extends JPanel {
 	private final SpinnerNumberModel probModel;
 	private final JComboBox<String> randomizerSelector;
 
+	private double average;
+	private double range;
+	private double prob;
+	private int index;
+
 	/**
 	 * 
 	 */
 	public RandomizerSelector(final double average, final double range,
 			final double probPositive) {
+		this.average = average;
+		this.range = range;
+		this.prob = probPositive;
+
 		avgModel = new SpinnerNumberModel(average, null, null, 0.01);
 		rangeModel = new SpinnerNumberModel(range, 0.0, null, 0.01);
 		probModel = new SpinnerNumberModel(probPositive, 0.0, 1.0, 0.01);
@@ -73,5 +82,25 @@ public class RandomizerSelector extends JPanel {
 			break;
 		}
 		return rz;
+	}
+
+	/**
+	 * 
+	 */
+	public void restore() {
+		avgModel.setValue(average);
+		rangeModel.setValue(range);
+		probModel.setValue(prob);
+		randomizerSelector.setSelectedIndex(index);
+	}
+
+	/**
+	 * 
+	 */
+	public void apply() {
+		average = avgModel.getNumber().doubleValue();
+		range = rangeModel.getNumber().doubleValue();
+		prob = rangeModel.getNumber().doubleValue();
+		index = randomizerSelector.getSelectedIndex();
 	}
 }

@@ -12,13 +12,12 @@ public class CylinderFunctionFactory implements FunctionFactory {
 	private final Randomizer<Double> height;
 
 	/**
-	 * @param sigma
+	 * @param radius
 	 * @param height
 	 */
-	public CylinderFunctionFactory(final double sigma,
+	public CylinderFunctionFactory(final double radius,
 			final Randomizer<Double> height) {
-		super();
-		this.radius2 = sigma * sigma;
+		this.radius2 = radius * radius;
 		this.height = height;
 	}
 

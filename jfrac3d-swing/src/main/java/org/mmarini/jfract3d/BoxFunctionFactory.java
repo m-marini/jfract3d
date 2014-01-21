@@ -8,17 +8,17 @@ package org.mmarini.jfract3d;
  * 
  */
 public class BoxFunctionFactory implements FunctionFactory {
-	private final double sigma;
+	private final double width;
 	private final Randomizer<Double> height;
 
 	/**
-	 * @param sigma
+	 * @param width
 	 * @param height
 	 */
-	public BoxFunctionFactory(final double sigma,
+	public BoxFunctionFactory(final double width,
 			final Randomizer<Double> height) {
 		super();
-		this.sigma = sigma;
+		this.width = width;
 		this.height = height;
 	}
 
@@ -32,7 +32,7 @@ public class BoxFunctionFactory implements FunctionFactory {
 
 			@Override
 			public Double apply(final Double x, final Double z) {
-				return (x > -sigma && x < sigma && z > -sigma && z < sigma) ? h
+				return (x > -width && x < width && z > -width && z < width) ? h
 						: 0.;
 			}
 		};

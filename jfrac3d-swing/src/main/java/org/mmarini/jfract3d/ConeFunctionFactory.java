@@ -12,13 +12,13 @@ public class ConeFunctionFactory implements FunctionFactory {
 	private final Randomizer<Double> height;
 
 	/**
-	 * @param sigma
+	 * @param radius
 	 * @param height
 	 */
-	public ConeFunctionFactory(final double sigma,
+	public ConeFunctionFactory(final double radius,
 			final Randomizer<Double> height) {
 		super();
-		this.radius = sigma;
+		this.radius = radius;
 		this.height = height;
 	}
 

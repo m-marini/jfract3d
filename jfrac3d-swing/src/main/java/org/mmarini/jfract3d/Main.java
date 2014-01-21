@@ -58,8 +58,6 @@ public class Main {
 	private static final long DEFAULT_SEED = 124l;
 	private static final double Y_SCALE = 500e-3;
 	private static final double Y_SCALE_STEP = 10e-3;
-	private static final double HEIGHT = 500e-3;
-	private static final double S = 300e-3;
 
 	/**
 	 * 
@@ -81,7 +79,7 @@ public class Main {
 	private final AbstractAction helpAction;
 	private final JComboBox<String> gridSelector;
 	private final JComboBox<String> functionSelector;
-	private final RandomizerSelector randomizerSelector;
+	private final FunctionDialog functionDialog;
 	private final GridDialog gridDialog;
 	private final AbstractAction exitAction;
 	private final SwingOptions options;
@@ -98,6 +96,7 @@ public class Main {
 		seedModel = new SpinnerNumberModel(DEFAULT_SEED, null, null, 1l);
 		yScaleModel = new SpinnerNumberModel(Y_SCALE, null, null, Y_SCALE_STEP);
 		gridDialog = new GridDialog(frame, -1, 1, -1, 1);
+		functionDialog = new FunctionDialog(frame);
 		gridAction = new AbstractAction() {
 			private static final long serialVersionUID = 1144447490677895560L;
 
@@ -131,7 +130,9 @@ public class Main {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				// TODO
+				if (functionDialog.showDialog(functionSelector
+						.getSelectedIndex()))
+					trans.setChild(createSubjectShape(), 0);
 			}
 
 		};
@@ -148,10 +149,10 @@ public class Main {
 				"Main.gridType.names").split(",")); //$NON-NLS-1$
 		functionSelector = new JComboBox<String>(Messages.getString(
 				"Main.function.names").split(",")); //$NON-NLS-1$
-		randomizerSelector = new RandomizerSelector(HEIGHT, HEIGHT / 5, 0.5);
 
 		final ActionBuilder builder = ActionBuilder.create(
-				Messages.RESOURCE_BUNDLE, options, frame, gridDialog);
+				Messages.RESOURCE_BUNDLE, options, frame, gridDialog,
+				functionDialog);
 
 		builder.setUp(gridAction, "gridPane"); //$NON-NLS-1$
 		builder.setUp(applyAction, "apply"); //$NON-NLS-1$
@@ -245,9 +246,6 @@ public class Main {
 
 		c.add(fc);
 
-		c.add(randomizerSelector);
-		randomizerSelector
-				.setBorder(BorderFactory.createTitledBorder("Height"));
 		c.add(new JButton(applyAction));
 		return c;
 	}
@@ -256,49 +254,53 @@ public class Main {
 	 * @return
 	 */
 	private FunctionFactory createFunctionFactory() {
-		final FunctionFactory f;
-		final Randomizer<Double> r = createRandomizer();
-		switch (functionSelector.getSelectedIndex()) {
-		case 1:
-			f = new PlaneFunctionFactory(r, r);
-			break;
-		case 2:
-			f = new PiramidFunctionFactory(r);
-			break;
-		case 3:
-			f = new ExpFunctionFactory(S, r);
-			break;
-		case 4:
-			f = new BoxFunctionFactory(S, r);
-			break;
-		case 5:
-			f = new CylinderFunctionFactory(S, r);
-			break;
-		case 6:
-			f = new ConeFunctionFactory(S, r);
-			break;
-		case 7:
-			f = new HemisphereFunctionFactory(S, r);
-			break;
-		case 8:
-			f = new SincFunctionFactory(S, r);
-			break;
-		default:
-			f = new GaussianFunctionFactory(S, r);
-			break;
-		}
-		return f;
+		final long s = seedModel.getNumber().longValue();
+		return functionDialog.createFunctionFactory(s == 0 ? new Random()
+				: new Random(s));
+		// final functionfactory f;
+		// final randomizer<double> r = createrandomizer();
+		// switch (functionselector.getselectedindex()) {
+		// case 1:
+		// f = new planefunctionfactory(r, r);
+		// break;
+		// case 2:
+		// f = new piramidfunctionfactory(s, r);
+		// break;
+		// case 3:
+		// f = new expfunctionfactory(s, r);
+		// break;
+		// case 4:
+		// f = new boxfunctionfactory(s, r);
+		// break;
+		// case 5:
+		// f = new cylinderfunctionfactory(s, r);
+		// break;
+		// case 6:
+		// f = new conefunctionfactory(s, r);
+		// break;
+		// case 7:
+		// f = new hemispherefunctionfactory(s, r);
+		// break;
+		// case 8:
+		// f = new sincfunctionfactory(s, r);
+		// break;
+		// default:
+		// f = new gaussianfunctionfactory(s, r);
+		// break;
+		// }
+		// return f;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	private Randomizer<Double> createRandomizer() {
-		final long v = seedModel.getNumber().longValue();
-		final Random s = v == 0 ? new Random() : new Random(v);
-		return randomizerSelector.createRandomizer(s);
-	}
+	//
+	// /**
+	// *
+	// * @return
+	// */
+	// private Randomizer<Double> createRandomizer() {
+	// final long v = seedModel.getNumber().longValue();
+	// final Random s = v == 0 ? new Random() : new Random(v);
+	// return randomizerSelector.createRandomizer(s);
+	// }
 
 	/**
 	 * The scene is composed as:

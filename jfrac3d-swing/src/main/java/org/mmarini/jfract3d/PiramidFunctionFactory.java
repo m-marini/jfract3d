@@ -8,12 +8,17 @@ package org.mmarini.jfract3d;
  * 
  */
 public class PiramidFunctionFactory implements FunctionFactory {
+	private final double width;
 	private final Randomizer<Double> height;
 
 	/**
+	 * @param width
+	 *            TODO
 	 * @param height
 	 */
-	public PiramidFunctionFactory(final Randomizer<Double> height) {
+	public PiramidFunctionFactory(final double width,
+			final Randomizer<Double> height) {
+		this.width = width;
 		this.height = height;
 	}
 

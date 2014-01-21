@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 import javax.media.j3d.Geometry;
 import javax.vecmath.Point3d;

@@ -44,6 +44,11 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>org.mmarini</groupId>
+			<artifactId>utils-lib</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.5</version>

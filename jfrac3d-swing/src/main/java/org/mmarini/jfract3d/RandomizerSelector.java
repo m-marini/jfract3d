@@ -1,13 +1,16 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 import java.util.Random;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.SpinnerNumberModel;
+
+import org.mmarini.swing.GridLayoutHelper;
+import org.mmarini.swing.SwingTools;
 
 /**
  * @author us00852
@@ -30,15 +33,17 @@ public class RandomizerSelector extends JPanel {
 		probModel = new SpinnerNumberModel(probPositive, 0.0, 1.0, 0.01);
 
 		randomizerSelector = new JComboBox<String>(
-				"None,Gaussian,Linear".split(","));
-		new GridLayoutHelper<>(this).modify("insets,2 w").add(
-				"RandomizerSelector.function.text", randomizerSelector,
-				"RandomizerSelector.average.text", "+hspan",
-				SwingTools.createSpinner(avgModel, "###0.00", 6),
+				"Gaussian,Linear,None".split(","));
+		new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE, this).modify(
+				"insets,2 w").add("RandomizerSelector.function.text",
+				randomizerSelector, "RandomizerSelector.average.text",
+				"+hspan",
+				SwingTools.createNumberSpinner(avgModel, "###0.00", 6),
 				"RandomizerSelector.probability.text",
-				SwingTools.createSpinner(probModel, "###0.0%", 6),
+				SwingTools.createNumberSpinner(probModel, "###0.0%", 6),
 				"RandomizerSelector.range.text", "+hspan",
-				SwingTools.createSpinner(rangeModel, "###0.00", 6));
+				SwingTools.createNumberSpinner(rangeModel, "###0.00", 6));
+		randomizerSelector.setSelectedIndex(0);
 	}
 
 	/**
@@ -52,10 +57,10 @@ public class RandomizerSelector extends JPanel {
 		final double s = rangeModel.getNumber().doubleValue();
 		final double p = probModel.getNumber().doubleValue();
 		switch (randomizerSelector.getSelectedIndex()) {
-		case 1:
+		case 0:
 			rz = new GaussRandomizer(r, a, s, p);
 			break;
-		case 2:
+		case 1:
 			rz = new LinearRandomizer(r, a, s, p);
 			break;
 		default:

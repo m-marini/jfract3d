@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 /**
  * @author US00852
@@ -24,7 +24,7 @@ public class PlaneFunctionFactory implements FunctionFactory {
 	}
 
 	/**
-	 * @see org.mmarini.jfract3d.swing.FunctionFactory#create()
+	 * @see org.mmarini.jfract3d.FunctionFactory#create()
 	 */
 	@Override
 	public Function3D create() {

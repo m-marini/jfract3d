@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -10,13 +10,16 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpinnerNumberModel;
+
+import org.mmarini.swing.ActionBuilder;
+import org.mmarini.swing.GridLayoutHelper;
+import org.mmarini.swing.SwingTools;
 
 /**
  * @author us00852
@@ -117,7 +120,9 @@ public class GridDialog extends JDialog {
 
 		};
 
-		final ActionBuilder b = new ActionBuilder();
+		// final ActionBuilder b = new ActionBuilder(
+		// "org.mmarini.jfrac3d.swing.messages");
+		final ActionBuilder b = ActionBuilder.create(Messages.RESOURCE_BUNDLE);
 		b.setUp(cancelAction, "cancel"); //$NON-NLS-1$
 		b.setUp(restoreAction, "restore"); //$NON-NLS-1$
 		b.setUp(applyAction, "apply"); //$NON-NLS-1$
@@ -166,16 +171,18 @@ public class GridDialog extends JDialog {
 			final AbstractAction restoreAction, final AbstractAction applyAction) {
 		final Container c = getContentPane();
 		c.setLayout(new BorderLayout());
-		c.add(new GridLayoutHelper<>(new JPanel())
+		c.add(new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE, new JPanel())
 				.modify("insets,2,5")
 				.add("GridDialog.xRange.text",
-						SwingTools.createSpinner(xMinModel, "#,##0.0", 5),
+						SwingTools.createNumberSpinner(xMinModel, "#,##0.0", 5),
 						"GridDialog.to.text",
-						SwingTools.createSpinner(xMaxModel, "#,##0.0", 5),
-						"+w hw hspan", xError, "GridDialog.zRange.text",
-						SwingTools.createSpinner(zMinModel, "#,##0.0", 5),
+						SwingTools.createNumberSpinner(xMaxModel, "#,##0.0", 5),
+						"+w hw hspan",
+						xError,
+						"GridDialog.zRange.text",
+						SwingTools.createNumberSpinner(zMinModel, "#,##0.0", 5),
 						"GridDialog.to.text",
-						SwingTools.createSpinner(zMaxModel, "#,##0.0", 5),
+						SwingTools.createNumberSpinner(zMaxModel, "#,##0.0", 5),
 						"+w hw hspan", zError).getContainer(),
 				BorderLayout.CENTER);
 		c.add(new GridLayoutHelper<>(new JPanel())

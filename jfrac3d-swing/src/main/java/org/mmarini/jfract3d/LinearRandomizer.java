@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 import java.util.Random;
 
@@ -30,7 +30,7 @@ public class LinearRandomizer implements Randomizer<Double> {
 	}
 
 	/**
-	 * @see org.mmarini.jfract3d.swing.Randomizer#nextDouble()
+	 * @see org.mmarini.jfract3d.Randomizer#nextDouble()
 	 */
 	@Override
 	public Double next() {

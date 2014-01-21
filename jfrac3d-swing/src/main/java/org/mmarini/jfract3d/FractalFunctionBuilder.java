@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 import java.util.ArrayList;
 import java.util.Collections;

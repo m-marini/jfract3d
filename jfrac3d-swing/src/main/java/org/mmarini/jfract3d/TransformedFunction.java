@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 /**
  * @author US00852
@@ -21,7 +21,7 @@ public class TransformedFunction implements Function3D {
 	}
 
 	/**
-	 * @see org.mmarini.jfract3d.swing.Functor2#apply(java.lang.Object,
+	 * @see org.mmarini.jfract3d.Functor2#apply(java.lang.Object,
 	 *      java.lang.Object)
 	 */
 	@Override

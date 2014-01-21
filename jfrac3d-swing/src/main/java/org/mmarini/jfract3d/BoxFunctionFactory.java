@@ -1,13 +1,13 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 /**
  * @author US00852
  * 
  */
-public class GaussianFunctionFactory implements FunctionFactory {
+public class BoxFunctionFactory implements FunctionFactory {
 	private final double sigma;
 	private final Randomizer<Double> height;
 
@@ -15,7 +15,7 @@ public class GaussianFunctionFactory implements FunctionFactory {
 	 * @param sigma
 	 * @param height
 	 */
-	public GaussianFunctionFactory(final double sigma,
+	public BoxFunctionFactory(final double sigma,
 			final Randomizer<Double> height) {
 		super();
 		this.sigma = sigma;
@@ -23,7 +23,7 @@ public class GaussianFunctionFactory implements FunctionFactory {
 	}
 
 	/**
-	 * @see org.mmarini.jfract3d.swing.FunctionFactory#create()
+	 * @see org.mmarini.jfract3d.FunctionFactory#create()
 	 */
 	@Override
 	public Function3D create() {
@@ -32,7 +32,8 @@ public class GaussianFunctionFactory implements FunctionFactory {
 
 			@Override
 			public Double apply(final Double x, final Double z) {
-				return Math.exp(-(x * x + z * z) / (2 * sigma * sigma)) * h;
+				return (x > -sigma && x < sigma && z > -sigma && z < sigma) ? h
+						: 0.;
 			}
 		};
 	}

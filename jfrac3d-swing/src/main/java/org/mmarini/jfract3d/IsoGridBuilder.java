@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 import javax.vecmath.Point3d;
 
@@ -9,7 +9,7 @@ import javax.vecmath.Point3d;
  * @author US00852
  * 
  */
-public class QuadGridBuilder implements GridBuilder {
+public class IsoGridBuilder implements GridBuilder {
 
 	private final double xMin;
 	private final double zMin;
@@ -24,7 +24,7 @@ public class QuadGridBuilder implements GridBuilder {
 	 * @param zMin
 	 * @param f
 	 */
-	public QuadGridBuilder(final double xDistance, final double zDistance,
+	public IsoGridBuilder(final double xDistance, final double zDistance,
 			final double xMin, final double zMin, final Function3D f) {
 		this.xMin = xMin;
 		this.zMin = zMin;
@@ -34,12 +34,13 @@ public class QuadGridBuilder implements GridBuilder {
 	}
 
 	/**
-	 * @see org.mmarini.jfract3d.swing.Functor2#apply(java.lang.Object,
+	 * @see org.mmarini.jfract3d.Functor2#apply(java.lang.Object,
 	 *      java.lang.Object)
 	 */
 	@Override
 	public Point3d apply(final Integer i, final Integer j) {
-		final double x = j * xDistance + xMin;
+		final double x = j * xDistance + xMin
+				+ ((i % 2) != 0 ? xDistance * 0.2 : 0);
 		final double z = i * zDistance + zMin;
 		return new Point3d(x, f.apply(x, z), z);
 	}

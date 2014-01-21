@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -11,9 +11,9 @@ import java.util.ResourceBundle;
  * 
  */
 public class Messages {
-	private static final String BUNDLE_NAME = "org.mmarini.jfract3d.swing.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.mmarini.jfract3d.messages"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+	public static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);
 
 	public static String getString(final String key) {

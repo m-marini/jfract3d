@@ -1,29 +1,29 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 /**
  * @author US00852
  * 
  */
-public class ConeFunctionFactory implements FunctionFactory {
-	private final double radius;
+public class CylinderFunctionFactory implements FunctionFactory {
+	private final double radius2;
 	private final Randomizer<Double> height;
 
 	/**
 	 * @param sigma
 	 * @param height
 	 */
-	public ConeFunctionFactory(final double sigma,
+	public CylinderFunctionFactory(final double sigma,
 			final Randomizer<Double> height) {
 		super();
-		this.radius = sigma;
+		this.radius2 = sigma * sigma;
 		this.height = height;
 	}
 
 	/**
-	 * @see org.mmarini.jfract3d.swing.FunctionFactory#create()
+	 * @see org.mmarini.jfract3d.FunctionFactory#create()
 	 */
 	@Override
 	public Function3D create() {
@@ -32,8 +32,8 @@ public class ConeFunctionFactory implements FunctionFactory {
 
 			@Override
 			public Double apply(final Double x, final Double z) {
-				final double d = radius - Math.sqrt(x * x + z * z);
-				return d > 0 ? d * h / radius : 0.;
+				final double d = x * x + z * z;
+				return d <= radius2 ? h : 0.;
 			}
 		};
 	}

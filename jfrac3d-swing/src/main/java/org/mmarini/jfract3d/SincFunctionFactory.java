@@ -1,29 +1,29 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 /**
  * @author US00852
  * 
  */
-public class CylinderFunctionFactory implements FunctionFactory {
-	private final double radius2;
+public class SincFunctionFactory implements FunctionFactory {
+	private final double radius;
 	private final Randomizer<Double> height;
 
 	/**
 	 * @param sigma
 	 * @param height
 	 */
-	public CylinderFunctionFactory(final double sigma,
+	public SincFunctionFactory(final double sigma,
 			final Randomizer<Double> height) {
 		super();
-		this.radius2 = sigma * sigma;
+		this.radius = sigma;
 		this.height = height;
 	}
 
 	/**
-	 * @see org.mmarini.jfract3d.swing.FunctionFactory#create()
+	 * @see org.mmarini.jfract3d.FunctionFactory#create()
 	 */
 	@Override
 	public Function3D create() {
@@ -32,8 +32,9 @@ public class CylinderFunctionFactory implements FunctionFactory {
 
 			@Override
 			public Double apply(final Double x, final Double z) {
-				final double d = x * x + z * z;
-				return d <= radius2 ? h : 0.;
+				final double s = Math.sqrt(x * x + z * z) * Math.PI / radius;
+				final double s1 = (s <= 1e-10) ? 1 : Math.sin(s) / (s / radius);
+				return s1 * h;
 			}
 		};
 	}

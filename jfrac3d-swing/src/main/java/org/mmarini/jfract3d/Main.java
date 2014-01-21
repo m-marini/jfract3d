@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -32,12 +32,14 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
+
+import org.mmarini.swing.ActionBuilder;
+import org.mmarini.swing.GridLayoutHelper;
+import org.mmarini.swing.SwingOptions;
+import org.mmarini.swing.SwingTools;
 
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.universe.PlatformGeometry;
@@ -53,7 +55,7 @@ public class Main {
 	private static final Bounds DEFAULT_BOUNDS = new BoundingSphere(
 			new Point3d(0.0, 0.0, 0.0), 100.0);
 
-	private static final long DEFAULT_SEED = 123l;
+	private static final long DEFAULT_SEED = 124l;
 	private static final double Y_SCALE = 500e-3;
 	private static final double Y_SCALE_STEP = 10e-3;
 	private static final double HEIGHT = 500e-3;
@@ -64,8 +66,6 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		SwingTools.setOptionsFile(".jfract3d.xml");
-		SwingTools.installLookAndFeel();
 		new Main().run();
 	}
 
@@ -83,13 +83,14 @@ public class Main {
 	private final JComboBox<String> functionSelector;
 	private final RandomizerSelector randomizerSelector;
 	private final GridDialog gridDialog;
-
 	private final AbstractAction exitAction;
+	private final SwingOptions options;
 
 	/**
 	 * 
 	 */
 	public Main() {
+		options = new SwingOptions(Main.class);
 		frame = new JFrame(Messages.getString("Main.title")); //$NON-NLS-1$
 		trans = new TransformGroup();
 		gridCountModel = new SpinnerNumberModel(65, 3, 129, 1);
@@ -149,15 +150,8 @@ public class Main {
 				"Main.function.names").split(",")); //$NON-NLS-1$
 		randomizerSelector = new RandomizerSelector(HEIGHT, HEIGHT / 5, 0.5);
 
-		final ActionBuilder builder = new ActionBuilder(new ChangeListener() {
-
-			@Override
-			public void stateChanged(final ChangeEvent e) {
-				for (final Component c : new Component[] { frame, gridDialog })
-					SwingUtilities.updateComponentTreeUI(c);
-				SwingTools.saveLookAndFeel();
-			}
-		});
+		final ActionBuilder builder = ActionBuilder.create(
+				Messages.RESOURCE_BUNDLE, options, frame, gridDialog);
 
 		builder.setUp(gridAction, "gridPane"); //$NON-NLS-1$
 		builder.setUp(applyAction, "apply"); //$NON-NLS-1$
@@ -219,10 +213,12 @@ public class Main {
 	private Component createControlPane() {
 		final JPanel c = new JPanel();
 
-		final JPanel gc = new GridLayoutHelper<>(new JPanel())
+		final JPanel gc = new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE,
+				new JPanel())
 				.modify("insets,2 w")
-				.add("Main.points.text", "+w hspan",
-						SwingTools.createSpinner(gridCountModel, "#0", 3),
+				.add("Main.points.text",
+						"+w hspan",
+						SwingTools.createNumberSpinner(gridCountModel, "#0", 3),
 						"Main.type.text", gridSelector, gridAction)
 				.getContainer();
 		gc.setBorder(BorderFactory.createTitledBorder(Messages
@@ -230,15 +226,19 @@ public class Main {
 
 		c.add(gc);
 
-		final JPanel fc = new GridLayoutHelper<>(new JPanel())
+		final JPanel fc = new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE,
+				new JPanel())
 				.modify("insets,2 w")
 				.add("Main.depth.text",
-						SwingTools.createSpinner(depthModel, "#,##0", 2),
-						"Main.function.text", functionSelector, "+hspan",
-						functionAction, "Main.yScale.text",
-						SwingTools.createSpinner(yScaleModel, "#,##0.000", 6),
-						"Main.seed.text", "+hspan",
-						SwingTools.createSpinner(seedModel, "#0", 6))
+						SwingTools.createNumberSpinner(depthModel, "#,##0", 2),
+						"Main.function.text",
+						functionSelector,
+						"+hspan",
+						functionAction,
+						"Main.yScale.text",
+						SwingTools.createNumberSpinner(yScaleModel,
+								"#,##0.000", 6), "Main.seed.text", "+hspan",
+						SwingTools.createNumberSpinner(seedModel, "#0", 6))
 				.getContainer();
 		fc.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.fractal.text"))); //$NON-NLS-1$

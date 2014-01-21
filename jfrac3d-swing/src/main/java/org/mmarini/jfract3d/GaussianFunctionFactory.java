@@ -1,29 +1,29 @@
 /**
  * 
  */
-package org.mmarini.jfract3d.swing;
+package org.mmarini.jfract3d;
 
 /**
  * @author US00852
  * 
  */
-public class HemisphereFunctionFactory implements FunctionFactory {
-	private final double radius;
+public class GaussianFunctionFactory implements FunctionFactory {
+	private final double sigma;
 	private final Randomizer<Double> height;
 
 	/**
 	 * @param sigma
 	 * @param height
 	 */
-	public HemisphereFunctionFactory(final double sigma,
+	public GaussianFunctionFactory(final double sigma,
 			final Randomizer<Double> height) {
 		super();
-		this.radius = sigma;
+		this.sigma = sigma;
 		this.height = height;
 	}
 
 	/**
-	 * @see org.mmarini.jfract3d.swing.FunctionFactory#create()
+	 * @see org.mmarini.jfract3d.FunctionFactory#create()
 	 */
 	@Override
 	public Function3D create() {
@@ -32,8 +32,7 @@ public class HemisphereFunctionFactory implements FunctionFactory {
 
 			@Override
 			public Double apply(final Double x, final Double z) {
-				final double s = radius * radius - x * x - z * z;
-				return s > 0 ? Math.sqrt(s) * h / radius : 0.;
+				return Math.exp(-(x * x + z * z) / (2 * sigma * sigma)) * h;
 			}
 		};
 	}

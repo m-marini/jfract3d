@@ -121,6 +121,9 @@ public class Main {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
+				// Set the selected function index
+				functionDialog.setFunctionIndex(functionSelector
+						.getSelectedIndex());
 				trans.setChild(createSubjectShape(), 0);
 			}
 
@@ -257,50 +260,7 @@ public class Main {
 		final long s = seedModel.getNumber().longValue();
 		return functionDialog.createFunctionFactory(s == 0 ? new Random()
 				: new Random(s));
-		// final functionfactory f;
-		// final randomizer<double> r = createrandomizer();
-		// switch (functionselector.getselectedindex()) {
-		// case 1:
-		// f = new planefunctionfactory(r, r);
-		// break;
-		// case 2:
-		// f = new piramidfunctionfactory(s, r);
-		// break;
-		// case 3:
-		// f = new expfunctionfactory(s, r);
-		// break;
-		// case 4:
-		// f = new boxfunctionfactory(s, r);
-		// break;
-		// case 5:
-		// f = new cylinderfunctionfactory(s, r);
-		// break;
-		// case 6:
-		// f = new conefunctionfactory(s, r);
-		// break;
-		// case 7:
-		// f = new hemispherefunctionfactory(s, r);
-		// break;
-		// case 8:
-		// f = new sincfunctionfactory(s, r);
-		// break;
-		// default:
-		// f = new gaussianfunctionfactory(s, r);
-		// break;
-		// }
-		// return f;
 	}
-
-	//
-	// /**
-	// *
-	// * @return
-	// */
-	// private Randomizer<Double> createRandomizer() {
-	// final long v = seedModel.getNumber().longValue();
-	// final Random s = v == 0 ? new Random() : new Random(v);
-	// return randomizerSelector.createRandomizer(s);
-	// }
 
 	/**
 	 * The scene is composed as:

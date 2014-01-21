@@ -204,4 +204,11 @@ public class FunctionDialog extends JDialog {
 		}
 		return f;
 	}
+
+	/**
+	 * @param selectIndex
+	 */
+	public void setFunctionIndex(final int selectIndex) {
+		this.functionIndex = selectIndex;
+	}
 }

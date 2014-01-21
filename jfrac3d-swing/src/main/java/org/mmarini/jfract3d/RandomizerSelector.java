@@ -100,7 +100,7 @@ public class RandomizerSelector extends JPanel {
 	public void apply() {
 		average = avgModel.getNumber().doubleValue();
 		range = rangeModel.getNumber().doubleValue();
-		prob = rangeModel.getNumber().doubleValue();
+		prob = probModel.getNumber().doubleValue();
 		index = randomizerSelector.getSelectedIndex();
 	}
 }

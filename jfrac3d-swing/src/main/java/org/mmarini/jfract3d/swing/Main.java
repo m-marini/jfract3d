@@ -64,6 +64,8 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
+		SwingTools.setOptionsFile(".jfract3d.xml");
+		SwingTools.installLookAndFeel();
 		new Main().run();
 	}
 
@@ -76,12 +78,13 @@ public class Main {
 	private final AbstractAction gridAction;
 	private final AbstractAction applyAction;
 	private final AbstractAction functionAction;
-	private final AbstractAction randomizerAction;
 	private final AbstractAction helpAction;
 	private final JComboBox<String> gridSelector;
 	private final JComboBox<String> functionSelector;
-	private final JComboBox<String> randomizerSelector;
+	private final RandomizerSelector randomizerSelector;
 	private final GridDialog gridDialog;
+
+	private final AbstractAction exitAction;
 
 	/**
 	 * 
@@ -131,12 +134,12 @@ public class Main {
 			}
 
 		};
-		randomizerAction = new AbstractAction() {
-			private static final long serialVersionUID = -2596155533532422674L;
+		exitAction = new AbstractAction() {
+			private static final long serialVersionUID = 4554447120464611067L;
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				// TODO
+				System.exit(0);
 			}
 
 		};
@@ -144,8 +147,7 @@ public class Main {
 				"Main.gridType.names").split(",")); //$NON-NLS-1$
 		functionSelector = new JComboBox<String>(Messages.getString(
 				"Main.function.names").split(",")); //$NON-NLS-1$
-		randomizerSelector = new JComboBox<String>(Messages.getString(
-				"Main.randomizer.names").split(",")); //$NON-NLS-1$
+		randomizerSelector = new RandomizerSelector(HEIGHT, HEIGHT / 5, 0.5);
 
 		final ActionBuilder builder = new ActionBuilder(new ChangeListener() {
 
@@ -153,29 +155,30 @@ public class Main {
 			public void stateChanged(final ChangeEvent e) {
 				for (final Component c : new Component[] { frame, gridDialog })
 					SwingUtilities.updateComponentTreeUI(c);
+				SwingTools.saveLookAndFeel();
 			}
 		});
 
 		builder.setUp(gridAction, "gridPane"); //$NON-NLS-1$
 		builder.setUp(applyAction, "apply"); //$NON-NLS-1$
 		builder.setUp(functionAction, "functionPane"); //$NON-NLS-1$
-		builder.setUp(randomizerAction, "randomizerPane"); //$NON-NLS-1$
 		builder.setUp(helpAction, "helpContent"); //$NON-NLS-1$
+		builder.setUp(exitAction, "exit"); //$NON-NLS-1$
 
 		gridSelector.setSelectedIndex(0);
 		functionSelector.setSelectedIndex(0);
-		randomizerSelector.setSelectedIndex(0);
 
 		frame.setLayout(new BorderLayout());
+		frame.setJMenuBar(builder.createMenuBar(
+				"file", exitAction, "options", "lookAndFeel", //$NON-NLS-1$ //$NON-NLS-2$
+				"help", helpAction)); //$NON-NLS-1$
+		frame.setSize(800, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		final Container c = frame.getContentPane();
 		c.setLayout(new BorderLayout());
 		c.add(createCanvas(), BorderLayout.CENTER);
 		c.add(createControlPane(), BorderLayout.SOUTH);
-		frame.setJMenuBar(builder.createMenuBar("options", "lookAndFeel", //$NON-NLS-1$ //$NON-NLS-2$
-				"help", helpAction)); //$NON-NLS-1$
-		frame.setSize(800, 600);
 		SwingTools.centerOnScreen(frame);
 	}
 
@@ -217,7 +220,7 @@ public class Main {
 		final JPanel c = new JPanel();
 
 		final JPanel gc = new GridLayoutHelper<>(new JPanel())
-				.modify("insets,2")
+				.modify("insets,2 w")
 				.add("Main.points.text", "+w hspan",
 						SwingTools.createSpinner(gridCountModel, "#0", 3),
 						"Main.type.text", gridSelector, gridAction)
@@ -231,8 +234,8 @@ public class Main {
 				.modify("insets,2 w")
 				.add("Main.depth.text",
 						SwingTools.createSpinner(depthModel, "#,##0", 2),
-						"Main.function.text", "+hspan", functionSelector,
-						"Main.yScale.text",
+						"Main.function.text", functionSelector, "+hspan",
+						functionAction, "Main.yScale.text",
 						SwingTools.createSpinner(yScaleModel, "#,##0.000", 6),
 						"Main.seed.text", "+hspan",
 						SwingTools.createSpinner(seedModel, "#0", 6))
@@ -242,6 +245,9 @@ public class Main {
 
 		c.add(fc);
 
+		c.add(randomizerSelector);
+		randomizerSelector
+				.setBorder(BorderFactory.createTitledBorder("Height"));
 		c.add(new JButton(applyAction));
 		return c;
 	}
@@ -289,27 +295,9 @@ public class Main {
 	 * @return
 	 */
 	private Randomizer<Double> createRandomizer() {
-		final Randomizer<Double> r;
 		final long v = seedModel.getNumber().longValue();
 		final Random s = v == 0 ? new Random() : new Random(v);
-		switch (randomizerSelector.getSelectedIndex()) {
-		case 0:
-			r = new GaussRandomizer(s, HEIGHT, HEIGHT / 7, 0.5);
-			break;
-		case 1:
-			r = new LinearRandomizer(s, HEIGHT, HEIGHT / 7, 0.5);
-			break;
-		default:
-			r = new Randomizer<Double>() {
-
-				@Override
-				public Double next() {
-					return HEIGHT;
-				}
-			};
-			break;
-		}
-		return r;
+		return randomizerSelector.createRandomizer(s);
 	}
 
 	/**

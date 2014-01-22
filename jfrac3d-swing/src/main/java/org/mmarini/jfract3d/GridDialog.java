@@ -10,6 +10,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -120,8 +121,6 @@ public class GridDialog extends JDialog {
 
 		};
 
-		// final ActionBuilder b = new ActionBuilder(
-		// "org.mmarini.jfrac3d.swing.messages");
 		final ActionBuilder b = ActionBuilder.create(Messages.RESOURCE_BUNDLE);
 		b.setUp(cancelAction, "cancel"); //$NON-NLS-1$
 		b.setUp(restoreAction, "restore"); //$NON-NLS-1$
@@ -157,8 +156,8 @@ public class GridDialog extends JDialog {
 		xMaxModel.setValue(GridDialog.this.xMax);
 		zMinModel.setValue(GridDialog.this.zMin);
 		zMaxModel.setValue(GridDialog.this.zMax);
-		xError.setText("");
-		zError.setText("");
+		xError.setText(""); //$NON-NLS-1$
+		zError.setText(""); //$NON-NLS-1$
 	}
 
 	/**
@@ -172,22 +171,21 @@ public class GridDialog extends JDialog {
 		final Container c = getContentPane();
 		c.setLayout(new BorderLayout());
 		c.add(new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE, new JPanel())
-				.modify("insets,2,5")
-				.add("GridDialog.xRange.text",
-						SwingTools.createNumberSpinner(xMinModel, "#,##0.0", 5),
-						"GridDialog.to.text",
-						SwingTools.createNumberSpinner(xMaxModel, "#,##0.0", 5),
-						"+w hw hspan",
+				.modify("insets,2,5") //$NON-NLS-1$
+				.add("GridDialog.xRange.text", //$NON-NLS-1$
+						SwingTools.createNumberSpinner(xMinModel, "#,##0.0", 5), //$NON-NLS-1$
+						"GridDialog.to.text", //$NON-NLS-1$
+						SwingTools.createNumberSpinner(xMaxModel, "#,##0.0", 5), //$NON-NLS-1$
+						"+w hw hspan", //$NON-NLS-1$
 						xError,
-						"GridDialog.zRange.text",
-						SwingTools.createNumberSpinner(zMinModel, "#,##0.0", 5),
-						"GridDialog.to.text",
-						SwingTools.createNumberSpinner(zMaxModel, "#,##0.0", 5),
-						"+w hw hspan", zError).getContainer(),
+						"GridDialog.zRange.text", //$NON-NLS-1$
+						SwingTools.createNumberSpinner(zMinModel, "#,##0.0", 5), //$NON-NLS-1$
+						"GridDialog.to.text", //$NON-NLS-1$
+						SwingTools.createNumberSpinner(zMaxModel, "#,##0.0", 5), //$NON-NLS-1$
+						"+w hw hspan", zError).getContainer(), //$NON-NLS-1$
 				BorderLayout.CENTER);
-		c.add(new GridLayoutHelper<>(new JPanel())
-				.modify("insets,10")
-				.add("+e hw", new JButton(cancelAction),
+		c.add(new GridLayoutHelper<>(new JPanel()).modify("insets,10") //$NON-NLS-1$
+				.add("+e hw", new JButton(cancelAction), //$NON-NLS-1$
 						new JButton(restoreAction), new JButton(applyAction))
 				.getContainer(), BorderLayout.SOUTH);
 	}

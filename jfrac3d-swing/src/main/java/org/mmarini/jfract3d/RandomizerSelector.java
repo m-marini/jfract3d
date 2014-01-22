@@ -42,14 +42,14 @@ public class RandomizerSelector extends JPanel {
 		avgModel = new SpinnerNumberModel(average, null, null, 0.01);
 		rangeModel = new SpinnerNumberModel(range, 0.0, null, 0.01);
 
-		randomizerSelector = new JComboBox<String>(
-				"Gaussian,Linear,None".split(","));
+		randomizerSelector = new JComboBox<String>(Messages.getString(
+				"RandomizerSelector.functions.text").split(",")); //$NON-NLS-1$ //$NON-NLS-2$
 		new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE, this).modify(
-				"insets,2 w").add("RandomizerSelector.function.text",
-				randomizerSelector, "RandomizerSelector.average.text",
-				SwingTools.createNumberSpinner(avgModel, "#,##0.00", 5),
-				"RandomizerSelector.range.text", "+hspan",
-				SwingTools.createNumberSpinner(rangeModel, "#,##0.00", 5));
+				"insets,2 w").add("RandomizerSelector.function.text", //$NON-NLS-1$ //$NON-NLS-2$
+				randomizerSelector, "RandomizerSelector.average.text", //$NON-NLS-1$
+				SwingTools.createNumberSpinner(avgModel, "#,##0.00", 5), //$NON-NLS-1$
+				"RandomizerSelector.range.text", "+hspan", //$NON-NLS-1$ //$NON-NLS-2$
+				SwingTools.createNumberSpinner(rangeModel, "#,##0.00", 5)); //$NON-NLS-1$
 		randomizerSelector.setSelectedIndex(0);
 	}
 

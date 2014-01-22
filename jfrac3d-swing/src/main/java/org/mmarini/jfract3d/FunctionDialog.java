@@ -110,17 +110,20 @@ public class FunctionDialog extends JDialog {
 		b.setUp(restoreAction, "restore"); //$NON-NLS-1$
 		b.setUp(applyAction, "apply"); //$NON-NLS-1$
 
-		heightRandomizer.setBorder(BorderFactory.createTitledBorder("Height"));
-		xSlopeRandomizer.setBorder(BorderFactory.createTitledBorder("x slope"));
-		ySlopeRandomizer.setBorder(BorderFactory.createTitledBorder("y slope"));
+		heightRandomizer.setBorder(BorderFactory.createTitledBorder(Messages
+				.getString("FunctionDialog.height.text"))); //$NON-NLS-1$
+		xSlopeRandomizer.setBorder(BorderFactory.createTitledBorder(Messages
+				.getString("FunctionDialog.xSlope.text"))); //$NON-NLS-1$
+		ySlopeRandomizer.setBorder(BorderFactory.createTitledBorder(Messages
+				.getString("FunctionDialog.ySlope.text"))); //$NON-NLS-1$
 
 		final Container c = getContentPane();
 		c.setLayout(new BorderLayout());
 		c.add(widthPane, BorderLayout.CENTER);
 		widthPane.doLayout();
 		c.add(new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE, new JPanel())
-				.modify("insets,5")
-				.add("+e hw", cancelAction, restoreAction, applyAction)
+				.modify("insets,5") //$NON-NLS-1$
+				.add("+e hw", cancelAction, restoreAction, applyAction) //$NON-NLS-1$
 				.getContainer(), BorderLayout.SOUTH);
 
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -157,11 +160,11 @@ public class FunctionDialog extends JDialog {
 	 */
 	private JPanel createWidthPane() {
 		return new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE, new JPanel())
-				.modify("insets,5 w")
-				.add("FunctionDialog.width.text",
-						"+hspan",
-						SwingTools.createNumberSpinner(widthModel, "#,##0.00",
-								5), "+hspan", heightRandomizer).getContainer();
+				.modify("insets,5 w") //$NON-NLS-1$
+				.add("FunctionDialog.width.text", //$NON-NLS-1$
+						"+hspan", //$NON-NLS-1$
+						SwingTools.createNumberSpinner(widthModel, "#,##0.00", //$NON-NLS-1$
+								5), "+hspan", heightRandomizer).getContainer(); //$NON-NLS-1$
 	}
 
 	/**

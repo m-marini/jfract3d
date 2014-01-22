@@ -6,6 +6,9 @@ package org.mmarini.jfract3d;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.Random;
 
@@ -29,6 +32,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SpinnerNumberModel;
@@ -41,6 +45,8 @@ import org.mmarini.swing.ActionBuilder;
 import org.mmarini.swing.GridLayoutHelper;
 import org.mmarini.swing.SwingOptions;
 import org.mmarini.swing.SwingTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.universe.PlatformGeometry;
@@ -52,7 +58,7 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
  * 
  */
 public class Main {
-
+	private static final Logger logger = LoggerFactory.getLogger(Main.class);
 	private static final Bounds DEFAULT_BOUNDS = new BoundingSphere(
 			new Point3d(0.0, 0.0, 0.0), 100.0);
 
@@ -65,6 +71,7 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
+		logger.info("Started ...");
 		new Main().run();
 	}
 
@@ -84,6 +91,7 @@ public class Main {
 	private final GridDialog gridDialog;
 	private final AbstractAction exitAction;
 	private final SwingOptions options;
+	private final JDialog helpDialog;
 
 	/**
 	 * 
@@ -98,6 +106,8 @@ public class Main {
 		yScaleModel = new SpinnerNumberModel(Y_SCALE, null, null, Y_SCALE_STEP);
 		gridDialog = new GridDialog(frame, -1, 1, -1, 1);
 		functionDialog = new FunctionDialog(frame, Function.GAUSSIAN);
+		helpDialog = SwingTools.createBrowserDialog(frame,
+				Messages.getString("Main.help.url"));
 		gridAction = new AbstractAction() {
 			private static final long serialVersionUID = 1144447490677895560L;
 
@@ -113,7 +123,15 @@ public class Main {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				// TODO
+				final Dimension ss = Toolkit.getDefaultToolkit()
+						.getScreenSize();
+				final Dimension fs = frame.getSize();
+				final Point fl = frame.getLocation();
+				final int hw = 400;
+				final int hx = Math.min(fl.x + fs.width, ss.width - hw);
+				helpDialog.setLocation(hx, fl.y);
+				helpDialog.setSize(hw, fs.height);
+				helpDialog.setVisible(true);
 			}
 
 		};
@@ -151,9 +169,9 @@ public class Main {
 
 		};
 		gridSelector = new JComboBox<String>(Messages.getString(
-				"Main.gridType.names").split(",")); //$NON-NLS-1$
+				"Main.gridType.names").split(",")); //$NON-NLS-1$ //$NON-NLS-2$
 		functionSelector = new JComboBox<String>(Messages.getString(
-				"Main.function.names").split(",")); //$NON-NLS-1$
+				"Main.function.names").split(",")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		final ActionBuilder builder = ActionBuilder.create(
 				Messages.RESOURCE_BUNDLE, options, frame, gridDialog,
@@ -168,9 +186,11 @@ public class Main {
 		gridSelector.setSelectedIndex(0);
 		functionSelector.setSelectedIndex(0);
 
+		helpDialog.setTitle(Messages.getString("Main.help.title")); //$NON-NLS-1$
+
 		frame.setLayout(new BorderLayout());
 		frame.setJMenuBar(builder.createMenuBar(
-				"file", exitAction, "options", "lookAndFeel", //$NON-NLS-1$ //$NON-NLS-2$
+				"file", exitAction, "options", "lookAndFeel", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				"help", helpAction)); //$NON-NLS-1$
 		frame.setSize(800, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -221,11 +241,11 @@ public class Main {
 
 		final JPanel gc = new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE,
 				new JPanel())
-				.modify("insets,2 w")
-				.add("Main.points.text",
-						"+w hspan",
-						SwingTools.createNumberSpinner(gridCountModel, "#0", 3),
-						"Main.type.text", gridSelector, gridAction)
+				.modify("insets,2 w") //$NON-NLS-1$
+				.add("Main.points.text", //$NON-NLS-1$
+						"+w hspan", //$NON-NLS-1$
+						SwingTools.createNumberSpinner(gridCountModel, "#0", 3), //$NON-NLS-1$
+						"Main.type.text", gridSelector, gridAction) //$NON-NLS-1$
 				.getContainer();
 		gc.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.grid.title"))); //$NON-NLS-1$
@@ -233,18 +253,17 @@ public class Main {
 		c.add(gc);
 
 		final JPanel fc = new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE,
-				new JPanel())
-				.modify("insets,2 w")
-				.add("Main.depth.text",
-						SwingTools.createNumberSpinner(depthModel, "#,##0", 2),
-						"Main.function.text",
+				new JPanel()).modify("insets,2 w") //$NON-NLS-1$
+				.add("Main.depth.text", //$NON-NLS-1$
+						SwingTools.createNumberSpinner(depthModel, "#,##0", 2), //$NON-NLS-1$
+						"Main.function.text", //$NON-NLS-1$
 						functionSelector,
-						"+hspan",
+						"+hspan", //$NON-NLS-1$
 						functionAction,
-						"Main.yScale.text",
+						"Main.yScale.text", //$NON-NLS-1$
 						SwingTools.createNumberSpinner(yScaleModel,
-								"#,##0.000", 6), "Main.seed.text", "+hspan",
-						SwingTools.createNumberSpinner(seedModel, "#0", 6))
+								"#,##0.000", 6), "Main.seed.text", "+hspan", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						SwingTools.createNumberSpinner(seedModel, "#0", 6)) //$NON-NLS-1$
 				.getContainer();
 		fc.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.fractal.text"))); //$NON-NLS-1$

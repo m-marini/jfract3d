@@ -32,9 +32,9 @@ public class PiramidFunctionFactory implements FunctionFactory {
 
 			@Override
 			public Double apply(final Double x, final Double z) {
-				final double f1 = Math.min(x + 1, 1 - x);
-				final double f2 = Math.min(z + 1, 1 - z);
-				return Math.max(Math.min(f1, f2), 0) * h;
+				final double f1 = Math.min(x + width, width - x);
+				final double f2 = Math.min(z + width, width - z);
+				return Math.max(Math.min(f1, f2), 0) * h / width;
 			}
 		};
 	}

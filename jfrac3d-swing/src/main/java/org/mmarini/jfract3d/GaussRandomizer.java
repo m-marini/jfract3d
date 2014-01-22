@@ -13,21 +13,19 @@ public class GaussRandomizer implements Randomizer<Double> {
 	private final Random random;
 	private final double average;
 	private final double width;
-	private final double positive;
 
 	/**
 	 * @param random
 	 * @param average
-	 * @param width
+	 * @param sigma
 	 * @param positive
 	 */
 	public GaussRandomizer(final Random random, final double average,
-			final double width, final double positive) {
+			final double sigma) {
 		super();
 		this.random = random;
 		this.average = average;
-		this.width = width;
-		this.positive = positive;
+		this.width = sigma;
 	}
 
 	/**
@@ -35,8 +33,7 @@ public class GaussRandomizer implements Randomizer<Double> {
 	 */
 	@Override
 	public Double next() {
-		final double s = random.nextGaussian() * width + average;
-		return random.nextDouble() < positive ? s : -s;
+		return random.nextGaussian() * width + average;
 	}
 
 }

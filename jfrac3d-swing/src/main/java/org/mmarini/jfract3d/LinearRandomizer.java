@@ -12,21 +12,19 @@ import java.util.Random;
 public class LinearRandomizer implements Randomizer<Double> {
 	private final Random random;
 	private final double average;
-	private final double width;
-	private final double positive;
+	private final double range;
 
 	/**
 	 * @param random
 	 * @param average
-	 * @param width
+	 * @param range
 	 * @param positive
 	 */
 	public LinearRandomizer(final Random random, final double average,
-			final double width, final double positive) {
+			final double range) {
 		this.random = random;
 		this.average = average;
-		this.width = width;
-		this.positive = positive;
+		this.range = range;
 	}
 
 	/**
@@ -34,8 +32,7 @@ public class LinearRandomizer implements Randomizer<Double> {
 	 */
 	@Override
 	public Double next() {
-		final double s = random.nextDouble() * width * 2 + average - width;
-		return random.nextDouble() < positive ? s : -s;
+		return random.nextDouble() * range + average - range / 2;
 	}
 
 }

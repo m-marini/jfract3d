@@ -36,6 +36,7 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
+import org.mmarini.jfract3d.FunctionDialog.Function;
 import org.mmarini.swing.ActionBuilder;
 import org.mmarini.swing.GridLayoutHelper;
 import org.mmarini.swing.SwingOptions;
@@ -96,7 +97,7 @@ public class Main {
 		seedModel = new SpinnerNumberModel(DEFAULT_SEED, null, null, 1l);
 		yScaleModel = new SpinnerNumberModel(Y_SCALE, null, null, Y_SCALE_STEP);
 		gridDialog = new GridDialog(frame, -1, 1, -1, 1);
-		functionDialog = new FunctionDialog(frame);
+		functionDialog = new FunctionDialog(frame, Function.GAUSSIAN);
 		gridAction = new AbstractAction() {
 			private static final long serialVersionUID = 1144447490677895560L;
 
@@ -122,8 +123,8 @@ public class Main {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				// Set the selected function index
-				functionDialog.setFunctionIndex(functionSelector
-						.getSelectedIndex());
+				functionDialog.setFunction(Function.values()[functionSelector
+						.getSelectedIndex()]);
 				trans.setChild(createSubjectShape(), 0);
 			}
 
@@ -133,8 +134,9 @@ public class Main {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				if (functionDialog.showDialog(functionSelector
-						.getSelectedIndex()))
+				if (functionDialog
+						.showDialog(Function.values()[functionSelector
+								.getSelectedIndex()]))
 					trans.setChild(createSubjectShape(), 0);
 			}
 

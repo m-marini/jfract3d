@@ -37,6 +37,15 @@ import org.mmarini.swing.SwingTools;
 public class FunctionDialog extends JDialog {
 	private static final long serialVersionUID = 8388879557737014394L;
 
+	/**
+	 * 
+	 * @author US00852
+	 * 
+	 */
+	public enum Function {
+		GAUSSIAN, PLANE, PIRAMID, EXPONENTIAL, BOX, CYLINDER, CONE, HEMISPHERE, SINC
+	}
+
 	private final RandomizerSelector heightRandomizer;
 	private final RandomizerSelector xSlopeRandomizer;
 	private final RandomizerSelector ySlopeRandomizer;
@@ -44,17 +53,21 @@ public class FunctionDialog extends JDialog {
 	private final JPanel widthPane;
 	private boolean validated;
 	private double widthParm;
-	private int functionIndex;
+	private Function function;
 
 	/**
 	 * @param owner
 	 */
-	public FunctionDialog(final Frame owner) {
+	public FunctionDialog(final Frame owner, final Function function) {
 		super(owner, true);
+		this.function = function;
 		widthParm = 0.5;
-		heightRandomizer = new RandomizerSelector(0.4, 0.2, 0.5);
-		xSlopeRandomizer = new RandomizerSelector(0.2, 0.2, 0.5);
-		ySlopeRandomizer = new RandomizerSelector(0.2, 0.2, 0.5);
+		heightRandomizer = new RandomizerSelector(
+				RandomizerSelector.Type.LINEAR, 0, 0.4);
+		xSlopeRandomizer = new RandomizerSelector(
+				RandomizerSelector.Type.LINEAR, 0, 0.4);
+		ySlopeRandomizer = new RandomizerSelector(
+				RandomizerSelector.Type.LINEAR, 0, 0.4);
 		widthModel = new SpinnerNumberModel(widthParm, 0.0, null, 0.01);
 
 		final AbstractAction cancelAction = new AbstractAction() {
@@ -104,13 +117,14 @@ public class FunctionDialog extends JDialog {
 		final Container c = getContentPane();
 		c.setLayout(new BorderLayout());
 		c.add(widthPane, BorderLayout.CENTER);
+		widthPane.doLayout();
 		c.add(new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE, new JPanel())
 				.modify("insets,5")
 				.add("+e hw", cancelAction, restoreAction, applyAction)
 				.getContainer(), BorderLayout.SOUTH);
 
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setSize(400, 300);
+		setSize(500, 310);
 		SwingTools.centerOnScreen(this);
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -121,6 +135,7 @@ public class FunctionDialog extends JDialog {
 			@Override
 			public void windowActivated(final WindowEvent e) {
 				validated = false;
+				doLayout();
 			}
 
 		});
@@ -146,15 +161,15 @@ public class FunctionDialog extends JDialog {
 				.add("FunctionDialog.width.text",
 						"+hspan",
 						SwingTools.createNumberSpinner(widthModel, "#,##0.00",
-								6), "+hspan", heightRandomizer).getContainer();
+								5), "+hspan", heightRandomizer).getContainer();
 	}
 
 	/**
 	 * 
 	 * @return
 	 */
-	public boolean showDialog(final int functionIndex) {
-		this.functionIndex = functionIndex;
+	public boolean showDialog(final Function function) {
+		this.function = function;
 		setVisible(true);
 		return validated;
 	}
@@ -164,36 +179,36 @@ public class FunctionDialog extends JDialog {
 	 */
 	public FunctionFactory createFunctionFactory(final Random r) {
 		final FunctionFactory f;
-		switch (functionIndex) {
-		case 1:
+		switch (function) {
+		case PLANE:
 			f = new PlaneFunctionFactory(xSlopeRandomizer.createRandomizer(r),
 					ySlopeRandomizer.createRandomizer(r));
 			break;
-		case 2:
+		case PIRAMID:
 			f = new PiramidFunctionFactory(widthParm,
 					heightRandomizer.createRandomizer(r));
 			break;
-		case 3:
+		case EXPONENTIAL:
 			f = new ExpFunctionFactory(widthParm / 2,
 					heightRandomizer.createRandomizer(r));
 			break;
-		case 4:
+		case BOX:
 			f = new BoxFunctionFactory(widthParm,
 					heightRandomizer.createRandomizer(r));
 			break;
-		case 5:
+		case CYLINDER:
 			f = new CylinderFunctionFactory(widthParm / 2,
 					heightRandomizer.createRandomizer(r));
 			break;
-		case 6:
+		case CONE:
 			f = new ConeFunctionFactory(widthParm / 2,
 					heightRandomizer.createRandomizer(r));
 			break;
-		case 7:
+		case HEMISPHERE:
 			f = new HemisphereFunctionFactory(widthParm / 2,
 					heightRandomizer.createRandomizer(r));
 			break;
-		case 8:
+		case SINC:
 			f = new SincFunctionFactory(widthParm / 2,
 					heightRandomizer.createRandomizer(r));
 			break;
@@ -206,9 +221,9 @@ public class FunctionDialog extends JDialog {
 	}
 
 	/**
-	 * @param selectIndex
+	 * @param function
 	 */
-	public void setFunctionIndex(final int selectIndex) {
-		this.functionIndex = selectIndex;
+	public void setFunction(final Function function) {
+		this.function = function;
 	}
 }

@@ -17,7 +17,6 @@ public class SincFunctionFactory implements FunctionFactory {
 	 */
 	public SincFunctionFactory(final double radius,
 			final Randomizer<Double> height) {
-		super();
 		this.radius = radius;
 		this.height = height;
 	}
@@ -28,12 +27,13 @@ public class SincFunctionFactory implements FunctionFactory {
 	@Override
 	public Function3D create() {
 		final double h = height.next();
+		final double k = 2 * Math.PI / radius;
 		return new Function3D() {
 
 			@Override
 			public Double apply(final Double x, final Double z) {
-				final double s = Math.sqrt(x * x + z * z) * Math.PI / radius;
-				final double s1 = (s <= 1e-10) ? 1 : Math.sin(s) / (s / radius);
+				final double s = Math.sqrt(x * x + z * z) * k;
+				final double s1 = (s <= 1e-10) ? 1 : Math.sin(s) / s;
 				return s1 * h;
 			}
 		};

@@ -152,11 +152,11 @@ public class FunctionDialog extends JDialog {
 		final FunctionFactory f;
 		switch (function) {
 		case PLANE:
-			f = new PlaneFunctionFactory(xSlopeRandomizer.createRandomizer(r),
+			f = new PlanFunctionFactory(xSlopeRandomizer.createRandomizer(r),
 					ySlopeRandomizer.createRandomizer(r));
 			break;
 		case PIRAMID:
-			f = new PiramidFunctionFactory(widthParm,
+			f = new PyramidFunctionFactory(widthParm,
 					heightRandomizer.createRandomizer(r));
 			break;
 		case EXPONENTIAL:

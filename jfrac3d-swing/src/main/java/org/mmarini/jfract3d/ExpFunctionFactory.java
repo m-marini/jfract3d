@@ -28,11 +28,12 @@ public class ExpFunctionFactory implements FunctionFactory {
 	@Override
 	public Function3D create() {
 		final double h = height.next();
+		final double k = -Math.sqrt(0.5) / sigma;
 		return new Function3D() {
 
 			@Override
 			public Double apply(final Double x, final Double z) {
-				return Math.exp(-Math.sqrt(x * x + z * z) / sigma) * h;
+				return Math.exp(Math.sqrt(x * x + z * z) * k) * h;
 			}
 		};
 	}

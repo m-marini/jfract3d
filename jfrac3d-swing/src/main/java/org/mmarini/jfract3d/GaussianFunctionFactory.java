@@ -17,7 +17,6 @@ public class GaussianFunctionFactory implements FunctionFactory {
 	 */
 	public GaussianFunctionFactory(final double sigma,
 			final Randomizer<Double> height) {
-		super();
 		this.sigma = sigma;
 		this.height = height;
 	}
@@ -28,11 +27,12 @@ public class GaussianFunctionFactory implements FunctionFactory {
 	@Override
 	public Function3D create() {
 		final double h = height.next();
+		final double k = -0.5 / sigma / sigma;
 		return new Function3D() {
 
 			@Override
 			public Double apply(final Double x, final Double z) {
-				return Math.exp(-(x * x + z * z) / (2 * sigma * sigma)) * h;
+				return Math.exp((x * x + z * z) * k) * h;
 			}
 		};
 	}

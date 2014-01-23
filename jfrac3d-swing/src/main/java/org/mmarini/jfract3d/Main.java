@@ -4,12 +4,12 @@
 package org.mmarini.jfract3d;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
+import java.net.URI;
 import java.util.Random;
 
 import javax.media.j3d.Alpha;
@@ -32,7 +32,6 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SpinnerNumberModel;
@@ -86,7 +85,6 @@ public class Main {
 	private final AbstractAction exitAction;
 	private final GridDialog gridDialog;
 	private final FunctionDialog functionDialog;
-	private final JDialog helpDialog;
 	private final SpinnerNumberModel gridCountModel;
 	private final SpinnerNumberModel depthModel;
 	private final SpinnerNumberModel seedModel;
@@ -109,8 +107,6 @@ public class Main {
 		yScaleModel = new SpinnerNumberModel(Y_SCALE, null, null, Y_SCALE_STEP);
 		gridDialog = new GridDialog(frame, -1, 1, -1, 1);
 		functionDialog = new FunctionDialog(frame, Function.GAUSSIAN);
-		helpDialog = SwingTools.createBrowserDialog(frame,
-				Messages.getString("Main.help.url")); //$NON-NLS-1$
 		gridAction = new AbstractAction() {
 			private static final long serialVersionUID = 1144447490677895560L;
 
@@ -126,15 +122,12 @@ public class Main {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				final Dimension ss = Toolkit.getDefaultToolkit()
-						.getScreenSize();
-				final Dimension fs = frame.getSize();
-				final Point fl = frame.getLocation();
-				final int hw = 400;
-				final int hx = Math.min(fl.x + fs.width, ss.width - hw);
-				helpDialog.setLocation(hx, fl.y);
-				helpDialog.setSize(hw, fs.height);
-				helpDialog.setVisible(true);
+				try {
+					Desktop.getDesktop().browse(
+							new URI(Messages.getString("Main.help.url")));
+				} catch (final Exception e1) {
+					logger.error(e1.getMessage(), e);
+				}
 			}
 
 		};
@@ -188,8 +181,7 @@ public class Main {
 
 		gridSelector.setSelectedIndex(0);
 		functionSelector.setSelectedIndex(0);
-
-		helpDialog.setTitle(Messages.getString("Main.help.title")); //$NON-NLS-1$
+		functionDialog.setTitle("Function properties");
 
 		frame.setLayout(new BorderLayout());
 		frame.setJMenuBar(builder.createMenuBar(
@@ -197,6 +189,8 @@ public class Main {
 				"help", helpAction)); //$NON-NLS-1$
 		frame.setSize(800, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		helpAction.setEnabled(Desktop.isDesktopSupported());
 
 		final Container c = frame.getContentPane();
 		c.setLayout(new BorderLayout());
@@ -303,9 +297,11 @@ public class Main {
 	 * </p>
 	 * 
 	 * <pre>
-	 *               root
-	 *              /    \     
-	 *     transform ____ rotator 
+	 *                 root
+	 *              /        \     
+	 *     transform -------- rotator 
+	 *         |                 |
+	 *   branch group    rotation interpolator
 	 *         |
 	 *  fractal surface
 	 * 
@@ -352,7 +348,12 @@ public class Main {
 	 */
 	private Appearance createSubjectAppearance() {
 		final Appearance a = new Appearance();
-		a.setMaterial(new Material());
+		final Material m = new Material();
+		m.setDiffuseColor(new Color3f(Color
+				.getHSBColor(32f / 360f, 0.12f, 0.9f)));
+		m.setSpecularColor(new Color3f(Color.getHSBColor(0f, 0f, 0.05f)));
+		m.setShininess(128f);
+		a.setMaterial(m);
 		return a;
 	}
 
@@ -422,19 +423,21 @@ public class Main {
 		final PlatformGeometry pg = new PlatformGeometry();
 
 		// Set up the ambient light
-		final AmbientLight al = new AmbientLight(new Color3f(0.1f, 0.1f, 0.1f));
+		final AmbientLight al = new AmbientLight(new Color3f(Color.getHSBColor(
+				195f / 360f, 0.23f, 0.3f)));
 		al.setInfluencingBounds(DEFAULT_BOUNDS);
 		pg.addChild(al);
 
 		// Set up the directional light 1
-		final DirectionalLight l1 = new DirectionalLight(new Color3f(0.2f,
-				0.15f, 0.1f), new Vector3f(1.0f, -0.5f, -1.0f));
+		final DirectionalLight l1 = new DirectionalLight(new Color3f(
+				Color.getHSBColor(195f / 360f, 0.23f, 0.1f)), new Vector3f(
+				1.0f, -0.5f, -1.0f));
 		l1.setInfluencingBounds(DEFAULT_BOUNDS);
 		pg.addChild(l1);
 
 		// Set up the directional light 2
-		final DirectionalLight l2 = new DirectionalLight(new Color3f(1.0f,
-				1.0f, 1.0f), new Vector3f(-1.0f, -1.0f, -1.0f));
+		final DirectionalLight l2 = new DirectionalLight(new Color3f(
+				Color.WHITE), new Vector3f(-1.0f, -1.0f, -1.0f));
 		l2.setInfluencingBounds(DEFAULT_BOUNDS);
 		pg.addChild(l2);
 

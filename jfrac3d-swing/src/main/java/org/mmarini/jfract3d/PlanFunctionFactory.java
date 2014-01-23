@@ -7,7 +7,7 @@ package org.mmarini.jfract3d;
  * @author marco.marini@mmarini.org
  * 
  */
-public class PlaneFunctionFactory implements FunctionFactory {
+public class PlanFunctionFactory implements FunctionFactory {
 	private final Randomizer<Double> xRandomizer;
 	private final Randomizer<Double> zRandomizer;
 
@@ -15,7 +15,7 @@ public class PlaneFunctionFactory implements FunctionFactory {
 	 * @param xRandomizer
 	 * @param zRandomizer
 	 */
-	public PlaneFunctionFactory(final Randomizer<Double> xRandomizer,
+	public PlanFunctionFactory(final Randomizer<Double> xRandomizer,
 			final Randomizer<Double> zRandomizer) {
 		this.xRandomizer = xRandomizer;
 		this.zRandomizer = zRandomizer;

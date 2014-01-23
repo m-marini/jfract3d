@@ -6,12 +6,10 @@ package org.mmarini.jfract3d;
 import java.util.Random;
 
 /**
- * @author US00852
+ * @author marco.marini@mmarini.org
  * 
  */
 public class ComposedRandomizer<T> implements Randomizer<T> {
-	private final Random random;
-
 	public class WieghtRandomizer {
 		private final double weight;
 		private final Randomizer<T> randomizer;
@@ -27,19 +25,21 @@ public class ComposedRandomizer<T> implements Randomizer<T> {
 		}
 
 		/**
-		 * @return the weight
-		 */
-		public double getWeight() {
-			return weight;
-		}
-
-		/**
 		 * @return the randomizer
 		 */
 		public Randomizer<T> getRandomizer() {
 			return randomizer;
 		}
+
+		/**
+		 * @return the weight
+		 */
+		public double getWeight() {
+			return weight;
+		}
 	}
+
+	private final Random random;
 
 	private final WieghtRandomizer[] randomizers;
 	private final double weight;

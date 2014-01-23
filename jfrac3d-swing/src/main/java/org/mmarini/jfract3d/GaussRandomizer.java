@@ -6,7 +6,7 @@ package org.mmarini.jfract3d;
 import java.util.Random;
 
 /**
- * @author US00852
+ * @author marco.marini@mmarini.org
  * 
  */
 public class GaussRandomizer implements Randomizer<Double> {

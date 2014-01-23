@@ -7,7 +7,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * @author US00852
+ * @author marco.marini@mmarini.org
  * 
  */
 public class Messages {

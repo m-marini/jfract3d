@@ -13,7 +13,7 @@ import org.mmarini.swing.GridLayoutHelper;
 import org.mmarini.swing.SwingTools;
 
 /**
- * @author us00852
+ * @author marco.marini@mmarini.org
  * 
  */
 public class RandomizerSelector extends JPanel {
@@ -55,6 +55,15 @@ public class RandomizerSelector extends JPanel {
 
 	/**
 	 * 
+	 */
+	public void apply() {
+		average = avgModel.getNumber().doubleValue();
+		range = rangeModel.getNumber().doubleValue();
+		type = Type.values()[randomizerSelector.getSelectedIndex()];
+	}
+
+	/**
+	 * 
 	 * @param r
 	 * @return
 	 */
@@ -88,14 +97,5 @@ public class RandomizerSelector extends JPanel {
 		avgModel.setValue(average);
 		rangeModel.setValue(range);
 		randomizerSelector.setSelectedIndex(type.ordinal());
-	}
-
-	/**
-	 * 
-	 */
-	public void apply() {
-		average = avgModel.getNumber().doubleValue();
-		range = rangeModel.getNumber().doubleValue();
-		type = Type.values()[randomizerSelector.getSelectedIndex()];
 	}
 }

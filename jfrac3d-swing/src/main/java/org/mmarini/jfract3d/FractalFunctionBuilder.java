@@ -10,7 +10,7 @@ import org.mmarini.fp.FPList;
 import org.mmarini.fp.Functor2;
 
 /**
- * @author US00852
+ * @author marco.marini@mmarini.org
  * 
  */
 public class FractalFunctionBuilder {

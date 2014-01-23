@@ -16,6 +16,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.WindowConstants;
 
 import org.mmarini.swing.ActionBuilder;
 import org.mmarini.swing.GridLayoutHelper;
@@ -31,20 +32,20 @@ import org.mmarini.swing.SwingTools;
  * value parameter for the width.</li>
  * </p>
  * 
- * @author us00852
+ * @author marco.marini@mmarini.org
  * 
  */
 public class FunctionDialog extends JDialog {
-	private static final long serialVersionUID = 8388879557737014394L;
-
 	/**
 	 * 
-	 * @author US00852
+	 * @author marco.marini@mmarini.org
 	 * 
 	 */
 	public enum Function {
 		GAUSSIAN, PLANE, PIRAMID, EXPONENTIAL, BOX, CYLINDER, CONE, HEMISPHERE, SINC
 	}
+
+	private static final long serialVersionUID = 8388879557737014394L;
 
 	private final RandomizerSelector heightRandomizer;
 	private final RandomizerSelector xSlopeRandomizer;
@@ -126,55 +127,22 @@ public class FunctionDialog extends JDialog {
 				.add("+e hw", cancelAction, restoreAction, applyAction) //$NON-NLS-1$
 				.getContainer(), BorderLayout.SOUTH);
 
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setSize(500, 310);
 		SwingTools.centerOnScreen(this);
 		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosed(final WindowEvent e) {
-				restore();
-			}
-
 			@Override
 			public void windowActivated(final WindowEvent e) {
 				validated = false;
 				doLayout();
 			}
 
+			@Override
+			public void windowClosed(final WindowEvent e) {
+				restore();
+			}
+
 		});
-	}
-
-	/**
-	 * 
-	 */
-	private void restore() {
-		widthModel.setValue(widthParm);
-		heightRandomizer.restore();
-		xSlopeRandomizer.restore();
-		ySlopeRandomizer.restore();
-	}
-
-	/**
-	 * @return
-	 * 
-	 */
-	private JPanel createWidthPane() {
-		return new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE, new JPanel())
-				.modify("insets,5 w") //$NON-NLS-1$
-				.add("FunctionDialog.width.text", //$NON-NLS-1$
-						"+hspan", //$NON-NLS-1$
-						SwingTools.createNumberSpinner(widthModel, "#,##0.00", //$NON-NLS-1$
-								5), "+hspan", heightRandomizer).getContainer(); //$NON-NLS-1$
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean showDialog(final Function function) {
-		this.function = function;
-		setVisible(true);
-		return validated;
 	}
 
 	/**
@@ -224,9 +192,42 @@ public class FunctionDialog extends JDialog {
 	}
 
 	/**
+	 * @return
+	 * 
+	 */
+	private JPanel createWidthPane() {
+		return new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE, new JPanel())
+				.modify("insets,5 w") //$NON-NLS-1$
+				.add("FunctionDialog.width.text", //$NON-NLS-1$
+						"+hspan", //$NON-NLS-1$
+						SwingTools.createNumberSpinner(widthModel, "#,##0.00", //$NON-NLS-1$
+								5), "+hspan", heightRandomizer).getContainer(); //$NON-NLS-1$
+	}
+
+	/**
+	 * 
+	 */
+	private void restore() {
+		widthModel.setValue(widthParm);
+		heightRandomizer.restore();
+		xSlopeRandomizer.restore();
+		ySlopeRandomizer.restore();
+	}
+
+	/**
 	 * @param function
 	 */
 	public void setFunction(final Function function) {
 		this.function = function;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean showDialog(final Function function) {
+		this.function = function;
+		setVisible(true);
+		return validated;
 	}
 }

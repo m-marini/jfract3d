@@ -4,7 +4,7 @@
 package org.mmarini.jfract3d;
 
 /**
- * @author US00852
+ * @author marco.marini@mmarini.org
  * 
  */
 public class PlaneFunctionFactory implements FunctionFactory {

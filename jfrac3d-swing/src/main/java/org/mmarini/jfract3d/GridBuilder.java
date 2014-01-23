@@ -8,7 +8,7 @@ import javax.vecmath.Point3d;
 import org.mmarini.fp.Functor2;
 
 /**
- * @author US00852
+ * @author marco.marini@mmarini.org
  * 
  */
 public interface GridBuilder extends Functor2<Point3d, Integer, Integer> {

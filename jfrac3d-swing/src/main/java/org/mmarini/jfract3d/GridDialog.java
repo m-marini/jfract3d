@@ -17,13 +17,14 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.WindowConstants;
 
 import org.mmarini.swing.ActionBuilder;
 import org.mmarini.swing.GridLayoutHelper;
 import org.mmarini.swing.SwingTools;
 
 /**
- * @author us00852
+ * @author marco.marini@mmarini.org
  * 
  */
 public class GridDialog extends JDialog {
@@ -131,33 +132,21 @@ public class GridDialog extends JDialog {
 
 		createContent(cancelAction, restoreAction, applyAction);
 
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setSize(500, 180);
 		SwingTools.centerOnScreen(this);
 		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosed(final WindowEvent e) {
-				restore();
-			}
-
 			@Override
 			public void windowActivated(final WindowEvent e) {
 				validated = false;
 			}
 
-		});
-	}
+			@Override
+			public void windowClosed(final WindowEvent e) {
+				restore();
+			}
 
-	/**
-	 * 
-	 */
-	private void restore() {
-		xMinModel.setValue(GridDialog.this.xMin);
-		xMaxModel.setValue(GridDialog.this.xMax);
-		zMinModel.setValue(GridDialog.this.zMin);
-		zMaxModel.setValue(GridDialog.this.zMax);
-		xError.setText(""); //$NON-NLS-1$
-		zError.setText(""); //$NON-NLS-1$
+		});
 	}
 
 	/**
@@ -191,13 +180,6 @@ public class GridDialog extends JDialog {
 	}
 
 	/**
-	 * @return the xMin
-	 */
-	public double getxMin() {
-		return xMin;
-	}
-
-	/**
 	 * @return the xMax
 	 */
 	public double getxMax() {
@@ -205,10 +187,10 @@ public class GridDialog extends JDialog {
 	}
 
 	/**
-	 * @return the zMin
+	 * @return the xMin
 	 */
-	public double getzMin() {
-		return zMin;
+	public double getxMin() {
+		return xMin;
 	}
 
 	/**
@@ -219,10 +201,29 @@ public class GridDialog extends JDialog {
 	}
 
 	/**
+	 * @return the zMin
+	 */
+	public double getzMin() {
+		return zMin;
+	}
+
+	/**
 	 * @return the gridValidated
 	 */
 	public boolean isValidated() {
 		return validated;
+	}
+
+	/**
+	 * 
+	 */
+	private void restore() {
+		xMinModel.setValue(GridDialog.this.xMin);
+		xMaxModel.setValue(GridDialog.this.xMax);
+		zMinModel.setValue(GridDialog.this.zMin);
+		zMaxModel.setValue(GridDialog.this.zMax);
+		xError.setText(""); //$NON-NLS-1$
+		zError.setText(""); //$NON-NLS-1$
 	}
 
 	/**

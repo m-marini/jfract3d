@@ -6,7 +6,7 @@ package org.mmarini.jfract3d;
 import javax.vecmath.Point3d;
 
 /**
- * @author US00852
+ * @author marco.marini@mmarini.org
  * 
  */
 public class IsoGridBuilder implements GridBuilder {

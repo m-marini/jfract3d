@@ -7,7 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 /**
- * @author US00852
+ * @author marco.marini@mmarini.org
  */
 public class FractalTransform {
 	private static final FractalTransform IDENTITY = new FractalTransform(

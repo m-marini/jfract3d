@@ -54,7 +54,9 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
 /**
- * @author US00852
+ * The entry point class for JFract3D.
+ * 
+ * @author marco.marini@mmarini.org
  * 
  */
 public class Main {
@@ -69,32 +71,33 @@ public class Main {
 	/**
 	 * 
 	 * @param args
+	 *            the command line argument. Ignored.
 	 */
 	public static void main(final String[] args) {
-		logger.info("Started ...");
+		logger.info("Started ..."); //$NON-NLS-1$
 		new Main().run();
 	}
 
 	private final JFrame frame;
-	private final TransformGroup trans;
-	private final SpinnerNumberModel gridCountModel;
-	private final SpinnerNumberModel depthModel;
-	private final SpinnerNumberModel seedModel;
-	private final SpinnerNumberModel yScaleModel;
 	private final AbstractAction gridAction;
 	private final AbstractAction applyAction;
 	private final AbstractAction functionAction;
 	private final AbstractAction helpAction;
+	private final AbstractAction exitAction;
+	private final GridDialog gridDialog;
+	private final FunctionDialog functionDialog;
+	private final JDialog helpDialog;
+	private final SpinnerNumberModel gridCountModel;
+	private final SpinnerNumberModel depthModel;
+	private final SpinnerNumberModel seedModel;
+	private final SpinnerNumberModel yScaleModel;
 	private final JComboBox<String> gridSelector;
 	private final JComboBox<String> functionSelector;
-	private final FunctionDialog functionDialog;
-	private final GridDialog gridDialog;
-	private final AbstractAction exitAction;
 	private final SwingOptions options;
-	private final JDialog helpDialog;
+	private final TransformGroup trans;
 
 	/**
-	 * 
+	 * Create the UI.
 	 */
 	public Main() {
 		options = new SwingOptions(Main.class);
@@ -107,7 +110,7 @@ public class Main {
 		gridDialog = new GridDialog(frame, -1, 1, -1, 1);
 		functionDialog = new FunctionDialog(frame, Function.GAUSSIAN);
 		helpDialog = SwingTools.createBrowserDialog(frame,
-				Messages.getString("Main.help.url"));
+				Messages.getString("Main.help.url")); //$NON-NLS-1$
 		gridAction = new AbstractAction() {
 			private static final long serialVersionUID = 1144447490677895560L;
 
@@ -203,7 +206,10 @@ public class Main {
 	}
 
 	/**
+	 * Add the viewing platform and the scene into the universe
+	 * 
 	 * @param u
+	 *            the universe
 	 */
 	private void addBranches(final SimpleUniverse u) {
 		// Setting viewing plattform
@@ -212,8 +218,9 @@ public class Main {
 	}
 
 	/**
+	 * Create the 3D canvas.
 	 * 
-	 * @return
+	 * @return the canvas
 	 */
 	private Canvas3D createCanvas() {
 		final Canvas3D c = new Canvas3D(
@@ -233,8 +240,9 @@ public class Main {
 	}
 
 	/**
+	 * Create the control panel.
 	 * 
-	 * @return
+	 * @return the control panel
 	 */
 	private Component createControlPane() {
 		final JPanel c = new JPanel();
@@ -275,7 +283,12 @@ public class Main {
 	}
 
 	/**
-	 * @return
+	 * Create the seed function factory.
+	 * <p>
+	 * The factory is used to create the fractal resulting function.
+	 * </p>
+	 * 
+	 * @return the factory
 	 */
 	private FunctionFactory createFunctionFactory() {
 		final long s = seedModel.getNumber().longValue();
@@ -284,19 +297,21 @@ public class Main {
 	}
 
 	/**
+	 * Create the scene nodes.
+	 * <p>
 	 * The scene is composed as:
+	 * </p>
 	 * 
 	 * <pre>
-	 * 
-	 *           root
-	 *          /    \     
-	 * transform ____ rotator 
-	 *     |
-	 *  subject
+	 *               root
+	 *              /    \     
+	 *     transform ____ rotator 
+	 *         |
+	 *  fractal surface
 	 * 
 	 * </pre>
 	 * 
-	 * @return
+	 * @return the scene
 	 */
 	private BranchGroup createScene() {
 		// Create the root of the branch graph
@@ -331,7 +346,9 @@ public class Main {
 	}
 
 	/**
-	 * @return
+	 * Create the appearance of fractal surface
+	 * 
+	 * @return the appearance
 	 */
 	private Appearance createSubjectAppearance() {
 		final Appearance a = new Appearance();
@@ -340,7 +357,9 @@ public class Main {
 	}
 
 	/**
-	 * @return
+	 * Create the fractal surface geometry
+	 * 
+	 * @return the geometry
 	 */
 	private Geometry createSubjectGeometry() {
 		final FunctionFactory f = createFunctionFactory();
@@ -364,8 +383,9 @@ public class Main {
 	}
 
 	/**
+	 * Create the fractal surface
 	 * 
-	 * @return
+	 * @return the surface
 	 */
 	private Node createSubjectShape() {
 		final BranchGroup bg = new BranchGroup();
@@ -378,14 +398,24 @@ public class Main {
 	}
 
 	/**
-	 * 
+	 * Start the applicaton.
 	 */
 	private void run() {
 		frame.setVisible(true);
 	}
 
 	/**
+	 * Set the viewing platform
+	 * <p>
+	 * The viewing platforms is composed by:
+	 * <ul>
+	 * <li>a soft white ambient light,</li>
+	 * <li>a soft directional light coming from up, backword, left</li>
+	 * <li>a shining white light coming from up, backward, right.</li></a>
+	 * </p>
+	 * 
 	 * @param vp
+	 *            the viewing platform
 	 */
 	private void setViewingPlatform(final ViewingPlatform vp) {
 
@@ -397,8 +427,8 @@ public class Main {
 		pg.addChild(al);
 
 		// Set up the directional light 1
-		final DirectionalLight l1 = new DirectionalLight(new Color3f(1.0f,
-				1.0f, 0.9f), new Vector3f(1.0f, 1.0f, 1.0f));
+		final DirectionalLight l1 = new DirectionalLight(new Color3f(0.2f,
+				0.15f, 0.1f), new Vector3f(1.0f, -0.5f, -1.0f));
 		l1.setInfluencingBounds(DEFAULT_BOUNDS);
 		pg.addChild(l1);
 

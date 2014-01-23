@@ -11,7 +11,7 @@ import com.sun.j3d.utils.geometry.NormalGenerator;
 import com.sun.j3d.utils.geometry.Stripifier;
 
 /**
- * @author US00852
+ * @author marco.marini@mmarini.org
  * 
  */
 public class IsoGeometryBuilder implements GeometryBuilder {

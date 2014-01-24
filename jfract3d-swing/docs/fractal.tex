@@ -1,0 +1,39 @@
+\documentclass{article}
+\begin{document}
+  \title{Spazio degli stati \thanks{Versione \$Id: Stati.tex,v 1.1 2007/08/31 01:19:50 marco Exp $ $}}
+  \author{Marco Marini}
+  \maketitle
+  \part{Main}
+  \section{Base}
+  
+  Sia $t\vec{V}$ una funzione vettoriale in $t$ con $0\le t\le 1$.
+  
+  Siano $T_i$ $n$ funzioni di trasformazione di vettori con $i=0 \dots (n-1)$.
+  
+  Sia $t\varphi=nt-floor(nt)$ funzione di $t$ abbiamo che $0\le t\varphi< 1$.
+  
+  Sia $t\sigma=floor(nt)$ funzione intera di $t$ abbiamo che $t\sigma=0\dots(n-1)$.
+  
+  Definiamo
+  
+  \begin{equation}
+    T^m_t=\prod_{i=0}^{m-1}T_{t\varphi^i\sigma}
+    =T_{t\sigma}T_{t\varphi\sigma}T_{t\varphi^2\sigma}\dots T_{t\varphi^{m-1}\sigma}
+  \end{equation}
+  
+  definamo poi
+
+  \begin{equation}
+    t\vec{V}^m=t\varphi^m\vec V
+  \end{equation}
+
+  \begin{equation}
+    t\vec{W}^m=t\vec{V}^mT^m_t
+  \end{equation}
+
+  La funzione frattale si definisce allora come
+
+  \begin{equation}
+    t\vec F=t\vec V + \sum_{i=1}^\infty t\vec W^i
+  \end{equation}
+\end{document}.

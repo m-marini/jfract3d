@@ -34,7 +34,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.mmarini.jfract3d.applet.JFract3D</mainClass>
+							<mainClass>org.mmarini.jfract3d.Main</mainClass>
 							<addClasspath>true</addClasspath>
 						</manifest>
 					</archive>

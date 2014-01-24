@@ -124,7 +124,7 @@ public class Main {
 			public void actionPerformed(final ActionEvent e) {
 				try {
 					Desktop.getDesktop().browse(
-							new URI(Messages.getString("Main.help.url")));
+							new URI(Messages.getString("Main.help.url"))); //$NON-NLS-1$
 				} catch (final Exception e1) {
 					logger.error(e1.getMessage(), e);
 				}
@@ -181,7 +181,6 @@ public class Main {
 
 		gridSelector.setSelectedIndex(0);
 		functionSelector.setSelectedIndex(0);
-		functionDialog.setTitle("Function properties");
 
 		frame.setLayout(new BorderLayout());
 		frame.setJMenuBar(builder.createMenuBar(

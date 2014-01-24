@@ -26,14 +26,14 @@ public class PlanFunctionFactory implements FunctionFactory {
 	 */
 	@Override
 	public Function3D create() {
-		final double a = xRandomizer.next() / 8;
-		final double b = zRandomizer.next() / 8;
+		final double a = xRandomizer.next();
+		final double b = zRandomizer.next();
 		return new Function3D() {
 
 			@Override
 			public Double apply(final Double x, final Double z) {
-				final double xx = Math.max(-0.5, Math.min(x, 0.5));
-				final double zz = Math.max(-0.5, Math.min(z, 0.5));
+				final double xx = Math.max(-1, Math.min(x, 1));
+				final double zz = Math.max(-1, Math.min(z, 1));
 				return a * xx + b * zz;
 			}
 		};

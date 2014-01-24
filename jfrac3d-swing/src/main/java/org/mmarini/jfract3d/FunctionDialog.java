@@ -42,16 +42,17 @@ public class FunctionDialog extends JDialog {
 	 * 
 	 */
 	public enum Function {
-		GAUSSIAN, PLANE, PIRAMID, EXPONENTIAL, BOX, CYLINDER, CONE, HEMISPHERE, SINC
+		GAUSSIAN, PLAN, PIRAMID, EXPONENTIAL, BOX, CYLINDER, CONE, HEMISPHERE, SINC
 	}
 
 	private static final long serialVersionUID = 8388879557737014394L;
 
 	private final RandomizerSelector heightRandomizer;
 	private final RandomizerSelector xSlopeRandomizer;
-	private final RandomizerSelector ySlopeRandomizer;
+	private final RandomizerSelector zSlopeRandomizer;
 	private final SpinnerNumberModel widthModel;
 	private final JPanel widthPane;
+	private final JPanel planPane;
 	private boolean validated;
 	private double widthParm;
 	private Function function;
@@ -67,7 +68,7 @@ public class FunctionDialog extends JDialog {
 				RandomizerSelector.Type.LINEAR, 0, 0.4);
 		xSlopeRandomizer = new RandomizerSelector(
 				RandomizerSelector.Type.LINEAR, 0, 0.4);
-		ySlopeRandomizer = new RandomizerSelector(
+		zSlopeRandomizer = new RandomizerSelector(
 				RandomizerSelector.Type.LINEAR, 0, 0.4);
 		widthModel = new SpinnerNumberModel(widthParm, 0.0, null, 0.01);
 
@@ -98,13 +99,14 @@ public class FunctionDialog extends JDialog {
 				widthParm = widthModel.getNumber().doubleValue();
 				heightRandomizer.apply();
 				xSlopeRandomizer.apply();
-				ySlopeRandomizer.apply();
+				zSlopeRandomizer.apply();
 				validated = true;
 				dispose();
 			}
 
 		};
 		widthPane = createWidthPane();
+		planPane = createPlanPane();
 
 		final ActionBuilder b = ActionBuilder.create(Messages.RESOURCE_BUNDLE);
 		b.setUp(cancelAction, "cancel"); //$NON-NLS-1$
@@ -115,8 +117,8 @@ public class FunctionDialog extends JDialog {
 				.getString("FunctionDialog.height.text"))); //$NON-NLS-1$
 		xSlopeRandomizer.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("FunctionDialog.xSlope.text"))); //$NON-NLS-1$
-		ySlopeRandomizer.setBorder(BorderFactory.createTitledBorder(Messages
-				.getString("FunctionDialog.ySlope.text"))); //$NON-NLS-1$
+		zSlopeRandomizer.setBorder(BorderFactory.createTitledBorder(Messages
+				.getString("FunctionDialog.zSlope.text"))); //$NON-NLS-1$
 
 		final Container c = getContentPane();
 		c.setLayout(new BorderLayout());
@@ -151,9 +153,9 @@ public class FunctionDialog extends JDialog {
 	public FunctionFactory createFunctionFactory(final Random r) {
 		final FunctionFactory f;
 		switch (function) {
-		case PLANE:
+		case PLAN:
 			f = new PlanFunctionFactory(xSlopeRandomizer.createRandomizer(r),
-					ySlopeRandomizer.createRandomizer(r));
+					zSlopeRandomizer.createRandomizer(r));
 			break;
 		case PIRAMID:
 			f = new PyramidFunctionFactory(widthParm,
@@ -193,6 +195,15 @@ public class FunctionDialog extends JDialog {
 
 	/**
 	 * @return
+	 */
+	private JPanel createPlanPane() {
+		return new GridLayoutHelper<>(new JPanel()).modify("insets,5") //$NON-NLS-1$
+				.add("+hspan", xSlopeRandomizer, zSlopeRandomizer) //$NON-NLS-1$
+				.getContainer();
+	}
+
+	/**
+	 * @return
 	 * 
 	 */
 	private JPanel createWidthPane() {
@@ -211,7 +222,7 @@ public class FunctionDialog extends JDialog {
 		widthModel.setValue(widthParm);
 		heightRandomizer.restore();
 		xSlopeRandomizer.restore();
-		ySlopeRandomizer.restore();
+		zSlopeRandomizer.restore();
 	}
 
 	/**
@@ -227,6 +238,13 @@ public class FunctionDialog extends JDialog {
 	 */
 	public boolean showDialog(final Function function) {
 		this.function = function;
+		final Container c = getContentPane();
+		c.remove(planPane);
+		c.remove(widthPane);
+		c.add(function.equals(Function.PLAN) ? planPane : widthPane,
+				BorderLayout.CENTER);
+		setTitle(Messages.getString("FunctionDialog." + function + ".title")); //$NON-NLS-1$ //$NON-NLS-2$
+		doLayout();
 		setVisible(true);
 		return validated;
 	}

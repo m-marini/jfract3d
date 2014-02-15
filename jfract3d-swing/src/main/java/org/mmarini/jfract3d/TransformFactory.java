@@ -3,15 +3,17 @@
  */
 package org.mmarini.jfract3d;
 
+import org.mmarini.fp.FPList;
+
 /**
  * @author marco.marini@mmarini.org
  * 
  */
-public interface Randomizer<T> {
+public interface TransformFactory {
 
 	/**
 	 * @return
 	 */
-	public abstract T next();
+	public abstract FPList<FractalTransform> create();
 
 }

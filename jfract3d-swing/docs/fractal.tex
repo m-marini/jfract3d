@@ -1,4 +1,9 @@
-\documentclass{article}
+\documentclass[a4paper,11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[italian]{babel}
+\usepackage{graphicx}
 \begin{document}
   \title{Spazio degli stati \thanks{Versione \$Id: Stati.tex,v 1.1 2007/08/31 01:19:50 marco Exp $ $}}
   \author{Marco Marini}
@@ -6,34 +11,126 @@
   \part{Main}
   \section{Base}
   
-  Sia $t\vec{V}$ una funzione vettoriale in $t$ con $0\le t\le 1$.
+  Sia $ t \vec{V} $ una funzione vettoriale in $ t $ con $ 0 \le t \le 1 $.
   
-  Siano $T_i$ $n$ funzioni di trasformazione di vettori con $i=0 \dots (n-1)$.
+  Siano $ T_i $ $ n $ funzioni di trasformazione di vettori con $ i = 1 \dots n $.
   
-  Sia $t\varphi=nt-floor(nt)$ funzione di $t$ abbiamo che $0\le t\varphi< 1$.
+  Sia $ t \varphi = n t - floor(nt) $ funzione di $ t $ abbiamo che $ 0 \le t \varphi < 1 $.
   
-  Sia $t\sigma=floor(nt)$ funzione intera di $t$ abbiamo che $t\sigma=0\dots(n-1)$.
+  Sia $ t \sigma = floor( n t ) $ funzione intera di $ t $ abbiamo che $ t \sigma = 0 \dots (n - 1) $.
   
   Definiamo
   
   \begin{equation}
-    T^m_t=\prod_{i=0}^{m-1}T_{t\varphi^i\sigma}
-    =T_{t\sigma}T_{t\varphi\sigma}T_{t\varphi^2\sigma}\dots T_{t\varphi^{m-1}\sigma}
+    T^m_t = \prod_{i = 1}^{m} T_{t \varphi^{i - 1} \sigma}
+    =T_{t \sigma} T_{t \varphi \sigma}T_{t \varphi^2 \sigma}\dots T_{t \varphi^{m - 1} \sigma}
   \end{equation}
   
   definamo poi
 
   \begin{equation}
-    t\vec{V}^m=t\varphi^m\vec V
+    t \vec{V}^m = t \varphi^m \vec V
   \end{equation}
 
   \begin{equation}
-    t\vec{W}^m=t\vec{V}^mT^m_t
+    t \vec{W}^m = t \vec{V}^m T^m_t
   \end{equation}
 
   La funzione frattale si definisce allora come
 
   \begin{equation}
-    t\vec F=t\vec V + \sum_{i=1}^\infty t\vec W^i
+    t \vec F = t \vec V + \sum_{i = 1}^\infty t \vec W^i
   \end{equation}
-\end{document}.
+
+\section{Piano}
+Calcoliamo l'equazione del piano passante per 3 punti $ P_1 = (0, y_1, 0), P_2 = (x_2, y_2, 0) , P_3 = (0, y_3, z_3) $
+\[
+	\vec V = A \times \vec W
+\]
+
+\[
+\left |
+\begin{array}{l}
+	x
+\\
+	y
+\\
+	z
+\end{array}
+\right |
+=
+\left |
+\begin{array}{lll}
+	a_{11} & a_{12} & a_{13}
+\\
+	a_{21} & a_{22} & a_{23}
+\\
+	a_{31} & a_{32} & a_{33}
+\end{array}
+\right |
+\left |
+\begin{array}{l}
+	u
+\\
+	v
+\\
+	1
+\end{array}
+\right |
+=
+\left |
+\begin{array}{l}
+	a_{11} u + a_{12} v + a_{13}
+\\
+	a_{21} u + a_{22} v + a_{23}
+\\
+	a_{31} u + a_{32} v + a_{33}
+\end{array}
+\right |
+\]
+
+poniamo che
+
+\[
+T = 
+\left |
+\begin{array}{lll}
+	1 & 0 & 0
+\\
+	a_{21} & a_{22} & a_{23}
+\\
+	0 & 0 & 1
+\end{array}
+\right |
+\]
+
+quindi
+
+\[
+ \vec V = 
+\left |
+\begin{array}{l}
+	u
+\\
+	a_{21} u + a_{22} v + a_{23}
+\\
+	v
+\end{array}
+\right |
+\]
+
+\[
+T^{-1} = 
+\left |
+\begin{array}{lll}
+	1 & 0 & 0
+\\
+	a_{21} & a_{22} & a_{23}
+\\
+	0 & 0 & 1
+\end{array}
+\right |
+\]
+
+
+\end{document}

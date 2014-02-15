@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mmarini</groupId>
 	<artifactId>jfract3d-swing</artifactId>
-	<version>0.2.0-alpha</version>
+	<version>0.3.0-alpha</version>
 	<build>
 		<resources>
 			<resource>
@@ -57,11 +57,6 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.0.13</version>
-		</dependency>
-		<dependency>
-			<groupId>java3d</groupId>
-			<artifactId>j3d-core-utils</artifactId>
-			<version>1.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

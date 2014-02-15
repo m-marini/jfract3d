@@ -9,8 +9,6 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Random;
-
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
@@ -150,48 +148,48 @@ public class FunctionDialog extends JDialog {
 	/**
 	 * @return
 	 */
-	public FunctionFactory createFunctionFactory(final Random r) {
-		final FunctionFactory f;
-		switch (function) {
-		case PLAN:
-			f = new PlanFunctionFactory(xSlopeRandomizer.createRandomizer(r),
-					zSlopeRandomizer.createRandomizer(r));
-			break;
-		case PIRAMID:
-			f = new PyramidFunctionFactory(widthParm,
-					heightRandomizer.createRandomizer(r));
-			break;
-		case EXPONENTIAL:
-			f = new ExpFunctionFactory(widthParm / 2,
-					heightRandomizer.createRandomizer(r));
-			break;
-		case BOX:
-			f = new BoxFunctionFactory(widthParm,
-					heightRandomizer.createRandomizer(r));
-			break;
-		case CYLINDER:
-			f = new CylinderFunctionFactory(widthParm / 2,
-					heightRandomizer.createRandomizer(r));
-			break;
-		case CONE:
-			f = new ConeFunctionFactory(widthParm / 2,
-					heightRandomizer.createRandomizer(r));
-			break;
-		case HEMISPHERE:
-			f = new HemisphereFunctionFactory(widthParm / 2,
-					heightRandomizer.createRandomizer(r));
-			break;
-		case SINC:
-			f = new SincFunctionFactory(widthParm / 2,
-					heightRandomizer.createRandomizer(r));
-			break;
-		default:
-			f = new GaussianFunctionFactory(widthParm,
-					heightRandomizer.createRandomizer(r));
-			break;
-		}
-		return f;
-	}
+	// public FunctionFactory createFunctionFactory(final Random r) {
+	// final FunctionFactory f;
+	// switch (function) {
+	// case PLAN:
+	// f = new PlanFunctionFactory(xSlopeRandomizer.createRandomizer(r),
+	// zSlopeRandomizer.createRandomizer(r));
+	// break;
+	// case PIRAMID:
+	// f = new PyramidFunctionFactory(widthParm,
+	// heightRandomizer.createRandomizer(r));
+	// break;
+	// case EXPONENTIAL:
+	// f = new ExpFunctionFactory(widthParm / 2,
+	// heightRandomizer.createRandomizer(r));
+	// break;
+	// case BOX:
+	// f = new BoxFunctionFactory(widthParm,
+	// heightRandomizer.createRandomizer(r));
+	// break;
+	// case CYLINDER:
+	// f = new CylinderFunctionFactory(widthParm / 2,
+	// heightRandomizer.createRandomizer(r));
+	// break;
+	// case CONE:
+	// f = new ConeFunctionFactory(widthParm / 2,
+	// heightRandomizer.createRandomizer(r));
+	// break;
+	// case HEMISPHERE:
+	// f = new HemisphereFunctionFactory(widthParm / 2,
+	// heightRandomizer.createRandomizer(r));
+	// break;
+	// case SINC:
+	// f = new SincFunctionFactory(widthParm / 2,
+	// heightRandomizer.createRandomizer(r));
+	// break;
+	// default:
+	// f = new GaussianFunctionFactory(widthParm,
+	// heightRandomizer.createRandomizer(r));
+	// break;
+	// }
+	// return f;
+	// }
 
 	/**
 	 * @return

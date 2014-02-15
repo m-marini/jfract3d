@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
+import java.awt.geom.Point2D;
 import java.net.URI;
 import java.util.Random;
 
@@ -102,7 +103,7 @@ public class Main {
 		frame = new JFrame(Messages.getString("Main.title")); //$NON-NLS-1$
 		trans = new TransformGroup();
 		gridCountModel = new SpinnerNumberModel(65, 3, 129, 1);
-		depthModel = new SpinnerNumberModel(4, 0, 6, 1);
+		depthModel = new SpinnerNumberModel(1, 0, 6, 1);
 		seedModel = new SpinnerNumberModel(DEFAULT_SEED, null, null, 1l);
 		yScaleModel = new SpinnerNumberModel(Y_SCALE, null, null, Y_SCALE_STEP);
 		gridDialog = new GridDialog(frame, -1, 1, -1, 1);
@@ -138,7 +139,7 @@ public class Main {
 			public void actionPerformed(final ActionEvent e) {
 				// Set the selected function index
 				functionDialog.setFunction(Function.values()[functionSelector
-						.getSelectedIndex()]);
+				                                             .getSelectedIndex()]);
 				trans.setChild(createSubjectShape(), 0);
 			}
 
@@ -150,7 +151,7 @@ public class Main {
 			public void actionPerformed(final ActionEvent e) {
 				if (functionDialog
 						.showDialog(Function.values()[functionSelector
-								.getSelectedIndex()]))
+						                              .getSelectedIndex()]))
 					trans.setChild(createSubjectShape(), 0);
 			}
 
@@ -179,7 +180,7 @@ public class Main {
 		builder.setUp(helpAction, "helpContent"); //$NON-NLS-1$
 		builder.setUp(exitAction, "exit"); //$NON-NLS-1$
 
-		gridSelector.setSelectedIndex(0);
+		gridSelector.setSelectedIndex(1);
 		functionSelector.setSelectedIndex(0);
 
 		frame.setLayout(new BorderLayout());
@@ -247,7 +248,7 @@ public class Main {
 						"+w hspan", //$NON-NLS-1$
 						SwingTools.createNumberSpinner(gridCountModel, "#0", 3), //$NON-NLS-1$
 						"Main.type.text", gridSelector, gridAction) //$NON-NLS-1$
-				.getContainer();
+						.getContainer();
 		gc.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.grid.title"))); //$NON-NLS-1$
 
@@ -264,8 +265,8 @@ public class Main {
 						"Main.yScale.text", //$NON-NLS-1$
 						SwingTools.createNumberSpinner(yScaleModel,
 								"#,##0.000", 6), "Main.seed.text", "+hspan", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						SwingTools.createNumberSpinner(seedModel, "#0", 6)) //$NON-NLS-1$
-				.getContainer();
+								SwingTools.createNumberSpinner(seedModel, "#0", 6)) //$NON-NLS-1$
+								.getContainer();
 		fc.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.fractal.text"))); //$NON-NLS-1$
 
@@ -276,20 +277,6 @@ public class Main {
 	}
 
 	/**
-	 * Create the seed function factory.
-	 * <p>
-	 * The factory is used to create the fractal resulting function.
-	 * </p>
-	 * 
-	 * @return the factory
-	 */
-	private FunctionFactory createFunctionFactory() {
-		final long s = seedModel.getNumber().longValue();
-		return functionDialog.createFunctionFactory(s == 0 ? new Random()
-				: new Random(s));
-	}
-
-	/**
 	 * Create the scene nodes.
 	 * <p>
 	 * The scene is composed as:
@@ -297,8 +284,8 @@ public class Main {
 	 * 
 	 * <pre>
 	 *                 root
-	 *              /        \     
-	 *     transform -------- rotator 
+	 *              /        \
+	 *     transform -------- rotator
 	 *         |                 |
 	 *   branch group    rotation interpolator
 	 *         |
@@ -362,24 +349,48 @@ public class Main {
 	 * @return the geometry
 	 */
 	private Geometry createSubjectGeometry() {
-		final FunctionFactory f = createFunctionFactory();
-		final double yScale = yScaleModel.getNumber().doubleValue();
-		final FractalTransform[] s = {
-				FractalTransform.create(2, 2, yScale, 0, -0.5, -0.5, 0),
-				FractalTransform.create(2, 2, yScale, 0, -0.5, 0.5, 0),
-				FractalTransform.create(2, 2, yScale, 0, 0.5, -0.5, 0),
-				FractalTransform.create(2, 2, yScale, 0, 0.5, 0.5, 0) };
-		final GeometryBuilder b = gridSelector.getSelectedIndex() == 0 ? IsoGeometryBuilder
-				.create(gridCountModel.getNumber().intValue(), gridDialog
-						.getxMin(), gridDialog.getxMax(), gridDialog.getzMin(),
-						gridDialog.getzMax(),
-						depthModel.getNumber().intValue(), f, s)
-				: QuadGeometryBuilder.create(gridCountModel.getNumber()
-						.intValue(), gridDialog.getxMin(),
-						gridDialog.getxMax(), gridDialog.getzMin(), gridDialog
-								.getzMax(), depthModel.getNumber().intValue(),
-						f, s);
-		return b.build();
+		final Surface s = new Surface() {
+
+			@Override
+			public Point3d apply(final Point2D p) {
+				final double x = p.getX();
+				final double y = p.getY();
+				// final double r2 = x * x + y * y;
+				return x >= -1 && x < 1 && y >= -1 && y < 1 ? new Point3d(x, 0,
+						y) : null;
+				// return r2 <= 0.8 ? new Point3d(x, Math.exp(-r2 / 0.2) / 2, y)
+				// : null;
+			}
+		};
+		// final Surface s = new Surface() {
+		//
+		// @Override
+		// public Point3d apply(final Point2D p) {
+		// final double x = p.getX();
+		// final double y = p.getY();
+		// final double r2 = x * x + y * y;
+		// return x >= -1 && x <= 1 && y >= -1 && y <= 1 ? new Point3d(x,
+		// Math.exp(-r2 / 0.2) / 2, y) : null;
+		// // return r2 <= 0.8 ? new Point3d(x, Math.exp(-r2 / 0.2) / 2, y)
+		// // : null;
+		// }
+		// };
+		final Random random = new Random();
+		final TransformFactory factory = new QuadFactory(new LinearRandomizer(
+				random, 0.0, 0.5), new LinearRandomizer(random, 0.0, 0.5),
+				new LinearRandomizer(random, 0.0, 0.5), new LinearRandomizer(
+						random, 0.0, 0.5), new LinearRandomizer(random, 0.0,
+								0.5));
+		final int n = gridCountModel.getNumber().intValue();
+		return SurfaceGeometryBuilder.createByRange(
+				n,
+				n,
+				-1,
+				1,
+				-1,
+				1,
+				new FractalSurfaceBuilder(factory, depthModel.getNumber()
+						.intValue()).build(s)).build();
 	}
 
 	/**
@@ -430,7 +441,7 @@ public class Main {
 		// Set up the directional light 1
 		final DirectionalLight l1 = new DirectionalLight(new Color3f(
 				Color.getHSBColor(195f / 360f, 0.23f, 0.1f)), new Vector3f(
-				1.0f, -0.5f, -1.0f));
+						1.0f, -0.5f, -1.0f));
 		l1.setInfluencingBounds(DEFAULT_BOUNDS);
 		pg.addChild(l1);
 

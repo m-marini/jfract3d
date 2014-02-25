@@ -1,0 +1,70 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+W: matrix(
+ [u], 
+ [v], 
+ [1]
+);
+
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F: matrix(
+ [1,1/2,0], 
+ [0,sqrt(3)/2,0], 
+ [0,0,1]
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+V:F.W;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ABC: matrix(
+ [-1,-1,1], 
+ [-1,1,-1], 
+ [1,1,1]
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F.ABC;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T120: matrix(
+ [cos(%pi*2/3),sin(%pi*2/3),0], 
+ [-sin(%pi*2/3),cos(%pi*2/3),0], 
+ [0,0,1]
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S120:invert(F).T120.F;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratsimp(F.S120.ABC)=ratsimp(T120.F.ABC);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T240: matrix(
+ [cos(%pi*2/3),-sin(%pi*2/3),0], 
+ [sin(%pi*2/3),cos(%pi*2/3),0], 
+ [0,0,1]
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S240:ratsimp(invert(F).T240.F);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratsimp(F.S240.ABC)=ratsimp(T240.F.ABC);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -39,6 +39,15 @@ public class SurfaceGeometryBuilder implements GeometryBuilder {
 				/ (uCount - 1), vCount, vMin, (vMax - vMin) / (vCount - 1), s);
 	}
 
+	private final int uCount;
+
+	private final double uMin;
+	private final double uStep;
+	private final int vCount;
+	private final double vMin;
+	private final double vStep;
+	private final Surface s;
+
 	/**
 	 * @param uCount
 	 * @param uMin
@@ -59,14 +68,6 @@ public class SurfaceGeometryBuilder implements GeometryBuilder {
 		this.vStep = vStep;
 		this.s = s;
 	}
-
-	private final int uCount;
-	private final double uMin;
-	private final double uStep;
-	private final int vCount;
-	private final double vMin;
-	private final double vStep;
-	private final Surface s;
 
 	/**
 	 * 

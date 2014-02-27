@@ -217,7 +217,6 @@ public class Main {
 	 * @return the control panel
 	 */
 	private Component createControlPane() {
-		final JPanel c = new JPanel();
 
 		final JPanel gc = new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE,
 				new JPanel())
@@ -230,8 +229,6 @@ public class Main {
 		gc.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.grid.title"))); //$NON-NLS-1$
 
-		c.add(gc);
-
 		final JPanel fc = new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE,
 				new JPanel()).modify("insets,2 w") //$NON-NLS-1$
 				.add("Main.depth.text", //$NON-NLS-1$
@@ -239,17 +236,20 @@ public class Main {
 						"Main.yScale.text", //$NON-NLS-1$
 						SwingTools.createNumberSpinner(yScaleModel,
 								"#,##0.000", 6), "Main.seed.text", "+hspan", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						SwingTools.createNumberSpinner(seedModel, "#0", 6), //$NON-NLS-1$
-						"+hspan", heightRandomizer) //$NON-NLS-1$
+						SwingTools.createNumberSpinner(seedModel, "#0", 6)) //$NON-NLS-1$
 				.getContainer();
 		fc.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.fractal.text"))); //$NON-NLS-1$
 		heightRandomizer.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.height.text"))); //$NON-NLS-1$
 
-		c.add(fc);
-
-		c.add(new JButton(applyAction));
+		final JPanel c = new GridLayoutHelper<>(Messages.RESOURCE_BUNDLE,
+				new JPanel()).modify("insets,2 w") //$NON-NLS-1$
+				.add("+vspan",//$NON-NLS-1$
+						gc, "+hspan", //$NON-NLS-1$ 
+						fc, "+vspan", //$NON-NLS-1$
+						heightRandomizer, new JButton(applyAction))
+				.getContainer();
 		return c;
 	}
 
@@ -326,9 +326,8 @@ public class Main {
 	 * @return the geometry
 	 */
 	private Geometry createSubjectGeometry() {
-		final Random random = new Random(seedModel.getNumber().longValue());
+		heightRandomizer.apply();
 		final int n = gridCountModel.getNumber().intValue();
-		Randomizer<Double> r = heightRandomizer.createRandomizer(random);
 		return SurfaceGeometryBuilder.createByRange(
 				n,
 				n,
@@ -337,7 +336,9 @@ public class Main {
 				-1,
 				1,
 				new SurfaceBuilder(depthModel.getNumber().intValue(),
-						yScaleModel.getNumber().doubleValue(), r).build())
+						yScaleModel.getNumber().doubleValue(), heightRandomizer
+								.createRandomizer(new Random(seedModel
+										.getNumber().longValue()))).build())
 				.build();
 	}
 
@@ -348,9 +349,8 @@ public class Main {
 	 */
 	private Node createSubjectShape() {
 		final BranchGroup bg = new BranchGroup();
-		final Shape3D shape = new Shape3D(createSubjectGeometry(),
-				createSubjectAppearance());
-		bg.addChild(shape);
+		bg.addChild(new Shape3D(createSubjectGeometry(),
+				createSubjectAppearance()));
 		bg.setCapability(BranchGroup.ALLOW_DETACH);
 		bg.compile();
 		return bg;

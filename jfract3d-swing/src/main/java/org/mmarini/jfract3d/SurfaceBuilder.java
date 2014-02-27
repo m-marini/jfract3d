@@ -28,7 +28,7 @@ public class SurfaceBuilder {
 	 *            TODO
 	 * @param randomizer
 	 */
-	public SurfaceBuilder(final int depth, double scale,
+	public SurfaceBuilder(final int depth, final double scale,
 			final Randomizer<Double> randomizer) {
 		this.scale = scale;
 		this.randomizer = randomizer;
@@ -102,9 +102,9 @@ public class SurfaceBuilder {
 		for (int k = (n - 1) / 2; k > 0; k /= 2) {
 			for (int i = 0; i < n - 1; i += k) {
 				for (int j = 0; j < n - i - 1; j += k) {
-					double a = grid[i][j];
-					double b = grid[i][j + k];
-					double c = grid[i + k][j];
+					final double a = grid[i][j];
+					final double b = grid[i][j + k];
+					final double c = grid[i + k][j];
 
 					if (i == n - k - 1)
 						// DEF

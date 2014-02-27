@@ -11,6 +11,7 @@ import javax.vecmath.Point3d;
 import org.mmarini.fp.FPArrayList;
 import org.mmarini.fp.FPList;
 import org.mmarini.fp.Functor2;
+import org.mmarini.jfract3d.TriangularSurface.Type;
 
 /**
  * @author US00852
@@ -20,10 +21,10 @@ public class SurfaceBuilder {
 	private final int depth;
 	private final Randomizer<Double> randomizer;
 	private final double[][] grid;
-	private static final Matrix3d ADE = new Matrix3d(2, 0, 1, 0, 2, 1, 0, 0, 1);
-	private static final Matrix3d BFD = new Matrix3d(2, 0, -1, 0, 2, 1, 0, 0, 1);
-	private static final Matrix3d EFC = new Matrix3d(2, 0, 1, 0, 2, -1, 0, 0, 1);
-	private static final Matrix3d DFE = new Matrix3d(-2, 0, -1, 0, -2, -1, 0,
+	private static final Matrix3d ABD = new Matrix3d(2, 0, 1, 0, 2, 1, 0, 0, 1);
+	private static final Matrix3d BCE = new Matrix3d(2, 0, -1, 0, 2, 1, 0, 0, 1);
+	private static final Matrix3d DEF = new Matrix3d(2, 0, 1, 0, 2, -1, 0, 0, 1);
+	private static final Matrix3d EDB = new Matrix3d(-2, 0, -1, 0, -2, -1, 0,
 			0, 1);
 
 	/**
@@ -48,7 +49,8 @@ public class SurfaceBuilder {
 		final FPList<Surface> l = createSurfaces();
 		final Matrix3d i = new Matrix3d();
 		i.setIdentity();
-		final Surface b = TriangularSurface.create(i, 0.0, 0.0, 0.0);
+		final Surface b = TriangularSurface.create(Type.FULL_CLOSED, i, 0.0,
+				0.0, 0.0);
 		return new Surface() {
 
 			@Override
@@ -73,41 +75,50 @@ public class SurfaceBuilder {
 	}
 
 	/**
+	 * <pre>
+	 * 
+	 * A--B--C
+	 * | /| /
+	 * |/ |/
+	 * D--E
+	 * | /
+	 * |/
+	 * F
+	 * 
+	 * A---B---C
+	 *  \ / \ /
+	 *   D---E
+	 *    \ /
+	 *     F
+	 *     
+	 * A---B b  b---C
+	 *  \ / / \  \ /
+	 *   d d---e  e
+	 *     D---E
+	 *      \ /
+	 *       F
+	 * 
+	 * ABd
+	 * bCe
+	 * DEF
+	 * edb
+	 * 
+	 * </pre>
+	 * 
 	 * @return
 	 */
 	private FPList<Surface> createSurfaces() {
 		final FPArrayList<Surface> l = new FPArrayList<>();
 		final double a = 0;
-		final double b = 0.1;
-		final double c = 0.2;
-		final double d = 0.3;
-		final double e = 0.4;
-		final double f = 0.5;
-		/**
-		 * <pre>
-		 * b
-		 * |\
-		 * d-f
-		 * |\|\
-		 * a-e-c
-		 * 
-		 *     b
-		 *    / \
-		 *   d---f
-		 *  / \ / \
-		 * a---e---c
-		 * 
-		 * u'=-v
-		 * ade
-		 * dfe
-		 * bfd
-		 * efc
-		 * </pre>
-		 */
-		l.add(TriangularSurface.createHeight(ADE, a, d, e));
-		// l.add(TriangularSurface.createHeight(DFE, d, f, e));
-		l.add(TriangularSurface.createHeight(BFD, b, f, d));
-		// l.add(TriangularSurface.createHeight(EFC, e, f, c));
+		final double b = 0.2;
+		final double c = 0.1;
+		final double d = 0.5;
+		final double e = 0.3;
+		final double f = 0.4;
+		l.add(TriangularSurface.createHeight(Type.CLOSED2, ABD, a, b, d));
+		l.add(TriangularSurface.createHeight(Type.CLOSED1, BCE, b, c, e));
+		l.add(TriangularSurface.createHeight(Type.FULL_CLOSED, DEF, d, e, f));
+		l.add(TriangularSurface.createHeight(Type.FULL_OPEN, EDB, e, d, b));
 		return l;
 	}
 

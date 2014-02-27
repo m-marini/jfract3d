@@ -50,7 +50,7 @@ public class RandomizerSelector extends JPanel {
 				SwingTools.createNumberSpinner(avgModel, "#,##0.00", 5), //$NON-NLS-1$
 				"RandomizerSelector.range.text", "+hspan", //$NON-NLS-1$ //$NON-NLS-2$
 				SwingTools.createNumberSpinner(rangeModel, "#,##0.00", 5)); //$NON-NLS-1$
-		randomizerSelector.setSelectedIndex(0);
+		randomizerSelector.setSelectedIndex(type.ordinal());
 	}
 
 	/**

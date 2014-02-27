@@ -99,7 +99,7 @@ public class Main {
 		frame = new JFrame(Messages.getString("Main.title")); //$NON-NLS-1$
 		trans = new TransformGroup();
 		gridCountModel = new SpinnerNumberModel(65, 3, 129, 1);
-		depthModel = new SpinnerNumberModel(1, 0, 6, 1);
+		depthModel = new SpinnerNumberModel(4, 0, 6, 1);
 		seedModel = new SpinnerNumberModel(DEFAULT_SEED, null, null, 1l);
 		yScaleModel = new SpinnerNumberModel(Y_SCALE, null, null, Y_SCALE_STEP);
 		gridDialog = new GridDialog(frame, -1, 1, -1, 1);

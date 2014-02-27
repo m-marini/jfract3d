@@ -17,7 +17,7 @@ public class SurfaceBuilderTest {
 	@Test
 	public void test() {
 		final SurfaceBuilder b = new SurfaceBuilder(3,
-				new Randomizer<Double>() {
+				0.5, new Randomizer<Double>() {
 
 					@Override
 					public Double next() {

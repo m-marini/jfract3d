@@ -39,7 +39,6 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
-import org.mmarini.jfract3d.FunctionDialog.Function;
 import org.mmarini.swing.ActionBuilder;
 import org.mmarini.swing.GridLayoutHelper;
 import org.mmarini.swing.SwingOptions;
@@ -80,17 +79,15 @@ public class Main {
 	private final JFrame frame;
 	private final AbstractAction gridAction;
 	private final AbstractAction applyAction;
-	private final AbstractAction functionAction;
 	private final AbstractAction helpAction;
 	private final AbstractAction exitAction;
 	private final GridDialog gridDialog;
-	private final FunctionDialog functionDialog;
 	private final SpinnerNumberModel gridCountModel;
 	private final SpinnerNumberModel depthModel;
 	private final SpinnerNumberModel seedModel;
 	private final SpinnerNumberModel yScaleModel;
 	private final JComboBox<String> gridSelector;
-	private final JComboBox<String> functionSelector;
+	private final RandomizerSelector heightRandomizer;
 	private final SwingOptions options;
 	private final TransformGroup trans;
 
@@ -106,7 +103,8 @@ public class Main {
 		seedModel = new SpinnerNumberModel(DEFAULT_SEED, null, null, 1l);
 		yScaleModel = new SpinnerNumberModel(Y_SCALE, null, null, Y_SCALE_STEP);
 		gridDialog = new GridDialog(frame, -1, 1, -1, 1);
-		functionDialog = new FunctionDialog(frame, Function.GAUSSIAN);
+		heightRandomizer = new RandomizerSelector(
+				RandomizerSelector.Type.LINEAR, 0, 0.4);
 		gridAction = new AbstractAction() {
 			private static final long serialVersionUID = 1144447490677895560L;
 
@@ -137,21 +135,7 @@ public class Main {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				// Set the selected function index
-				functionDialog.setFunction(Function.values()[functionSelector
-						.getSelectedIndex()]);
 				trans.setChild(createSubjectShape(), 0);
-			}
-
-		};
-		functionAction = new AbstractAction() {
-			private static final long serialVersionUID = 4554447120464611067L;
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				if (functionDialog
-						.showDialog(Function.values()[functionSelector
-								.getSelectedIndex()]))
-					trans.setChild(createSubjectShape(), 0);
 			}
 
 		};
@@ -166,21 +150,16 @@ public class Main {
 		};
 		gridSelector = new JComboBox<String>(Messages.getString(
 				"Main.gridType.names").split(",")); //$NON-NLS-1$ //$NON-NLS-2$
-		functionSelector = new JComboBox<String>(Messages.getString(
-				"Main.function.names").split(",")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		final ActionBuilder builder = ActionBuilder.create(
-				Messages.RESOURCE_BUNDLE, options, frame, gridDialog,
-				functionDialog);
+				Messages.RESOURCE_BUNDLE, options, frame, gridDialog);
 
 		builder.setUp(gridAction, "gridPane"); //$NON-NLS-1$
 		builder.setUp(applyAction, "apply"); //$NON-NLS-1$
-		builder.setUp(functionAction, "functionPane"); //$NON-NLS-1$
 		builder.setUp(helpAction, "helpContent"); //$NON-NLS-1$
 		builder.setUp(exitAction, "exit"); //$NON-NLS-1$
 
-		gridSelector.setSelectedIndex(1);
-		functionSelector.setSelectedIndex(0);
+		gridSelector.setSelectedIndex(0);
 
 		frame.setLayout(new BorderLayout());
 		frame.setJMenuBar(builder.createMenuBar(
@@ -257,17 +236,16 @@ public class Main {
 				new JPanel()).modify("insets,2 w") //$NON-NLS-1$
 				.add("Main.depth.text", //$NON-NLS-1$
 						SwingTools.createNumberSpinner(depthModel, "#,##0", 2), //$NON-NLS-1$
-						"Main.function.text", //$NON-NLS-1$
-						functionSelector,
-						"+hspan", //$NON-NLS-1$
-						functionAction,
 						"Main.yScale.text", //$NON-NLS-1$
 						SwingTools.createNumberSpinner(yScaleModel,
 								"#,##0.000", 6), "Main.seed.text", "+hspan", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						SwingTools.createNumberSpinner(seedModel, "#0", 6)) //$NON-NLS-1$
+						SwingTools.createNumberSpinner(seedModel, "#0", 6), //$NON-NLS-1$
+						"+hspan", heightRandomizer) //$NON-NLS-1$
 				.getContainer();
 		fc.setBorder(BorderFactory.createTitledBorder(Messages
 				.getString("Main.fractal.text"))); //$NON-NLS-1$
+		heightRandomizer.setBorder(BorderFactory.createTitledBorder(Messages
+				.getString("Main.height.text"))); //$NON-NLS-1$
 
 		c.add(fc);
 
@@ -348,8 +326,9 @@ public class Main {
 	 * @return the geometry
 	 */
 	private Geometry createSubjectGeometry() {
-		final Random random = new Random();
+		final Random random = new Random(seedModel.getNumber().longValue());
 		final int n = gridCountModel.getNumber().intValue();
+		Randomizer<Double> r = heightRandomizer.createRandomizer(random);
 		return SurfaceGeometryBuilder.createByRange(
 				n,
 				n,
@@ -358,7 +337,7 @@ public class Main {
 				-1,
 				1,
 				new SurfaceBuilder(depthModel.getNumber().intValue(),
-						new LinearRandomizer(random, 0.0, 0.5)).build())
+						yScaleModel.getNumber().doubleValue(), r).build())
 				.build();
 	}
 
